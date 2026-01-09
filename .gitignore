@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.ipynb_checkpoints
+
+# LaTeX (Archivos temporales de compilación)
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
