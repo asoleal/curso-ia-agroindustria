@@ -1,0 +1,56 @@
+\documentclass[12pt, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath}
+
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+\title{\textbf{Reporte Técnico de Operaciones: Calidad y Procesos}}
+\author{Departamento de Ingeniería Agroindustrial}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+Este reporte consolida el análisis operativo de la planta, abarcando desde el modelado físico de los tanques de recepción hasta el análisis estadístico masivo de la calidad de la materia prima.
+
+\section{Fase 1: Modelado Físico (Enfriamiento)}
+Para garantizar la inocuidad, se simuló la cinética de enfriamiento usando la \textbf{Ley de Enfriamiento de Newton}. La evolución de la temperatura $T(t)$ se describe mediante la ecuación diferencial:
+
+\begin{equation}
+    \frac{dT}{dt} = -k (T(t) - T_{amb})
+\end{equation}
+
+Donde $k = 0.15$ min$^{-1}$ y $T_{amb} = 4^{\circ}C$.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imagenes/simulacion_enfriamiento.png}
+    \caption{Simulación del abatimiento de temperatura en Tanque 1.}
+\end{figure}
+
+El análisis determinó que el tiempo crítico para alcanzar la temperatura segura es de \textbf{34 minutos}.
+
+\newpage
+
+\section{Fase 2: Análisis de Calidad (Big Data)}
+Se procesaron 1,000 registros de recepción de leche utilizando la librería \textit{Pandas} de Python. Se realizó limpieza de datos (eliminación de errores de sensor) y análisis de distribución.
+
+\subsection{Distribución de Grados Brix}
+El análisis del histograma permite identificar la variabilidad en los sólidos solubles entregados por los proveedores:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imagenes/distribucion_brix.png}
+    \caption{Distribución de frecuencia de calidad (Brix) del mes de Enero.}
+\end{figure}
+
+\section{Conclusión}
+La integración de modelos matemáticos (EDO) y ciencia de datos permite un control integral: desde la física del tanque individual hasta la estadística macro de los proveedores.
+
+\end{document}
+
