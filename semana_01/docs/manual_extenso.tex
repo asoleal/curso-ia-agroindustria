@@ -1,0 +1,165 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{amssymb} % Necesario para simbolos matematicos
+
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+% Configuración de colores estilo VS Code
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{\textbf{Manual de Ingeniería de Software I}\\ Fundamentos de Terminal, Linux y Automatización}
+\author{Semana 01 - Curso de IA Agroindustrial}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introducción: La Filosofía CLI}
+La Interfaz de Línea de Comandos (CLI) no es una herramienta antigua; es una herramienta \textbf{precisa}. En entornos de servidores, computación en la nube (AWS, Azure) y dispositivos IoT (Raspberry Pi en campo), la interfaz gráfica consume recursos innecesarios.
+\\
+\\
+\textbf{Principio Fundamental:} En Linux, \textit{todo es un archivo}. Un sensor es un archivo, el disco duro es un archivo, y los procesos son archivos. Manipular archivos es manipular el sistema.
+
+\section{Módulo 1: Navegación y Reconocimiento}
+Antes de dar órdenes, debemos saber dónde estamos.
+
+\subsection{El Sistema de Archivos}
+\begin{itemize}
+    \item \textbf{/} (Raíz): El inicio de todo.
+    \item \textbf{\textasciitilde} (Home): Tu carpeta personal (/home/usuario).
+    \item \textbf{.} (Punto): El directorio actual.
+    \item \textbf{..} (Doble punto): El directorio padre (atrás).
+\end{itemize}
+
+\subsection{Comandos de Exploración}
+\begin{longtable}{p{0.3\textwidth} p{0.6\textwidth}}
+\toprule
+\textbf{Comando} & \textbf{Descripción Técnica} \\
+\midrule
+\texttt{pwd} & \textit{Print Working Directory}. Muestra la ruta absoluta actual. \\
+\texttt{ls} & \textit{List}. Muestra archivos en la carpeta actual. \\
+\texttt{ls -l} & Formato largo. Muestra permisos, dueño, tamaño y fecha. \\
+\texttt{ls -a} & Muestra archivos ocultos (los que inician con punto). \\
+\texttt{ls -R} & Recursivo. Muestra el contenido de todas las subcarpetas. \\
+\texttt{ls -lh} & Human-readable. Muestra tamaños en KB, MB, GB. \\
+\texttt{history} & Muestra la lista de comandos que has ejecutado recientemente. \\
+\texttt{clear} & Limpia la pantalla (pero no borra el historial). \\
+\bottomrule
+\end{longtable}
+
+\section{Módulo 2: Manipulación de Infraestructura}
+Como ingenieros, creamos y destruimos estructuras de datos.
+
+\subsection{Creación y Destrucción}
+% CORRECCION: Se reemplazo el emoji por $\triangle$
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=$\triangle$ Cuidado con rm]
+El comando \texttt{rm} no envía a la papelera. \textbf{Elimina permanentemente}.
+\end{tcolorbox}
+
+\begin{itemize}
+    \item \texttt{mkdir nombre}: Crea una carpeta.
+    \item \texttt{mkdir -p a/b/c}: Crea una ruta completa de carpetas anidadas.
+    \item \texttt{touch archivo.txt}: Crea un archivo vacío o actualiza la fecha de uno existente.
+    \item \texttt{rm archivo}: Borra un archivo.
+    \item \texttt{rm -r carpeta}: Borra una carpeta y su contenido (Recursivo).
+    \item \texttt{rm -rf carpeta}: Borra forzadamente sin preguntar (Force).
+\end{itemize}
+
+\subsection{Movimiento y Copiado}
+\begin{itemize}
+    \item \texttt{cp origen destino}: Copia un archivo.
+    \item \texttt{cp -r origen destino}: Copia una carpeta entera.
+    \item \texttt{mv origen destino}: Mueve un archivo. También se usa para \textbf{renombrar}.
+\end{itemize}
+
+\section{Módulo 3: Visualización y Edición de Datos}
+Un Data Scientist a menudo necesita inspeccionar CSVs de gigabytes sin abrir Excel.
+
+\subsection{Lectura Eficiente}
+\begin{itemize}
+    \item \texttt{cat archivo}: Concatena e imprime todo el archivo en pantalla.
+    \item \texttt{head -n 5 archivo}: Muestra solo las primeras 5 líneas.
+    \item \texttt{tail -n 5 archivo}: Muestra las últimas 5 líneas (útil para logs en tiempo real).
+    \item \texttt{less archivo}: Permite navegar el archivo con flechas (salir con 'q').
+\end{itemize}
+
+\subsection{El Editor Nano}
+Nano es un editor de texto en terminal.
+\begin{itemize}
+    \item \textbf{Ctrl + O}: Guardar (Write Out).
+    \item \textbf{Ctrl + X}: Salir.
+    \item \textbf{Ctrl + K}: Cortar línea.
+    \item \textbf{Ctrl + U}: Pegar línea.
+\end{itemize}
+
+\section{Módulo 4: Scripting y Automatización (Bash)}
+Bash es un lenguaje de programación interpretado. Nos permite automatizar tareas repetitivas.
+
+\subsection{Estructura de un Script}
+Todo script debe iniciar con el \textit{Shebang}: \texttt{\#!/bin/bash}. Esto le dice al sistema qué intérprete usar.
+
+\subsection{Variables y Bucles}
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+# Definicion de variables
+SENSOR="Humedad"
+
+# Bucle FOR para iterar rangos
+for i in {1..5}; do
+    echo "Leyendo $SENSOR en Sector $i..."
+    # Aqui irian comandos de lectura real
+done
+\end{lstlisting}
+
+\subsection{Permisos de Ejecución}
+Linux protege el sistema impidiendo que cualquier archivo se ejecute como programa.
+\begin{itemize}
+    \item \texttt{chmod +x script.sh}: Otorga permiso de e\textbf{x}ecution (ejecución).
+\end{itemize}
+
+\section{Módulo 5: Git (Control de Versiones)}
+Git gestiona la historia de tu código.
+
+\begin{enumerate}
+    \item \textbf{git init}: Crea un repositorio en la carpeta actual.
+    \item \textbf{git status}: ¿Qué ha cambiado desde la última "foto"?
+    \item \textbf{git add .}: Prepara todos los cambios para la foto.
+    \item \textbf{git commit -m "mensaje"}: Toma la foto y la guarda.
+    \item \textbf{git log}: Muestra el historial de fotos.
+    \item \textbf{git push}: Sube las fotos a la nube (GitHub/GitLab).
+\end{enumerate}
+
+\end{document}
