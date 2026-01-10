@@ -1,108 +1,112 @@
 # 🛠️ Taller 1: Fundamentos de Ingeniería de Software (Terminal, Git y Scripting)
 
-Bienvenido. En este taller dejarás de ser un usuario que solo hace "clic" para convertirte en un creador que da órdenes directas al sistema operativo. Aprenderemos a navegar, automatizar tareas y gestionar versiones de nuestro trabajo.
+Bienvenido. En este taller dejarás de ser un usuario que solo hace "clic" para convertirte en un creador que da órdenes directas al sistema operativo. Aprenderemos a navegar, automatizar tareas y gestionar versiones.
 
 ---
 
 ## 📍 PARTE 1: El Terreno (Navegación y Archivos)
-Antes de construir, necesitamos dominar el entorno. **Regla de oro:** No uses el mouse.
+**Regla de oro:** No uses el mouse.
 
 ### 1. Ubicación y Movimiento
-* **`pwd`**: (Print Working Directory) ¿Dónde estoy parado?
-* **`ls`**: (List) Muestra qué hay en la carpeta.
-    * `ls -l`: Ver detalles (tamaño, permisos).
-    * `ls -a`: Ver ocultos.
-* **`cd carpeta`**: Entrar a una carpeta.
-    * `cd ..`: Regresar atrás.
-    * `cd ~`: Ir al inicio (Home).
+* **`pwd`**: ¿Dónde estoy?
+* **`ls -l`**: Listar archivos con detalles.
+* **`cd carpeta`**: Entrar a una carpeta (`cd ..` para salir).
 
-### 2. Gestión de Archivos (Crear, Copiar, Borrar)
-* **`mkdir nombre`**: Crea una carpeta.
-    * `mkdir -p a/b/c`: Crea una jerarquía completa.
-* **`touch archivo.txt`**: Crea un archivo vacío.
-* **`cp origen destino`**: Copia archivos.
-    * `cp -r carpeta destino`: Copia carpetas completas (**r**ecursivo).
-* **`mv origen destino`**: Mueve o cambia el nombre.
-* **`rm archivo`**: ⚠️ Borra un archivo para siempre.
-    * `rm -rf carpeta`: Borra una carpeta y todo su contenido a la fuerza.
-
-> **🧠 Práctica Rápida:**
-> 1. Crea una carpeta `lab_01` y entra en ella.
-> 2. Crea un archivo `experimento.txt`.
-> 3. Hazle una copia de seguridad: `cp experimento.txt backup.txt`.
-> 4. Borra el original: `rm experimento.txt`.
+### 2. Gestión Básica
+* **`mkdir -p a/b/c`**: Crea carpetas anidadas.
+* **`touch archivo`**: Crea archivo vacío.
+* **`cp -r origen destino`**: Copia carpetas.
+* **`mv origen destino`**: Mueve o renombra.
+* **`rm -rf carpeta`**: ⚠️ Borra carpeta y contenido a la fuerza.
 
 ---
 
-## 📝 PARTE 2: Edición y Manipulación (`nano`, `cat`, `sed`)
-No necesitamos Word para escribir código o configuaciones.
+## 📝 PARTE 2: Edición y Manipulación
 
 ### 1. El Editor (`nano`)
-* **`nano archivo.txt`**: Abre un editor en la terminal.
-    * **Guardar:** `Ctrl + O` -> `Enter`.
-    * **Salir:** `Ctrl + X`.
+* **`nano script.py`**: Abre el editor. `Ctrl+O` (Guardar), `Ctrl+X` (Salir).
 
-### 2. El Visor (`cat`)
-* **`cat archivo.txt`**: Muestra el contenido sin abrir el editor.
+### 2. El Cirujano (`sed`)
+* **`sed -i 's/viejo/nuevo/g' archivo.txt`**: Reemplaza texto en un archivo automáticamente.
 
-### 3. El Cirujano de Texto (`sed`)
-Imagina que tienes que corregir una palabra en 1,000 líneas.
-* **Sintaxis:** `sed -i 's/viejo/nuevo/g' archivo.txt`
-    * `-i`: Guarda los cambios en el archivo (in-place).
-    * `s`: Sustituir.
-    * `g`: Global (todas las ocurrencias).
+### 3. Escritura en Bloque (`cat`) 🔥 *Nivel Pro*
+¿Cómo crear un archivo con muchas líneas sin abrir nano? Usamos un "Heredoc".
 
-> **🧠 Práctica de Edición:**
-> 1. Crea un archivo: `echo "Hola Mundo" > saludo.txt`
-> 2. Usa sed para cambiarlo: `sed -i 's/Mundo/Ingeniero/g' saludo.txt`
-> 3. Verifica: `cat saludo.txt` (Debería decir "Hola Ingeniero").
+Ejemplo:
+\`\`\`bash
+cat << EOF > mensaje.txt
+Linea 1: Hola
+Linea 2: Esto se escribió automático
+EOF
+\`\`\`
+*Todo lo que escribas entre los dos `EOF` se guardará en el archivo.*
 
 ---
 
-## 🤖 PARTE 3: Scripting (Automatización)
-Aquí ocurre la magia. Un **Script (.sh)** es un archivo con una lista de comandos que la computadora ejecuta por ti.
+## 🤖 PARTE 3: Scripting (Bucles y Automatización)
+Un script `.sh` automatiza tareas repetitivas. Vamos a aprender a usar **bucles** para repetir acciones.
 
-### Pasos para crear un script:
-1.  **Crear:** `nano programa.sh`
-2.  **Cabecera:** La primera línea debe ser `#!/bin/bash`.
-3.  **Permisos:** Debes hacerlo ejecutable: `chmod +x programa.sh`.
-4.  **Ejecutar:** `./programa.sh`
-
----
-
-## 🔗 PARTE 4: Git (Trazabilidad y Control)
-Git es la bitácora de tu proyecto. Guarda la historia de cada cambio.
-
-1.  **`git status`**: ¿Qué ha cambiado? (Rojo = sin guardar, Verde = listo).
-2.  **`git add .`**: Preparar todos los cambios (La Cosecha).
-3.  **`git commit -m "Mensaje"`**: Guardar la versión en el historial (El Sello).
-4.  **`git push`**: Subir cambios a la nube (GitHub).
+**La lógica del bucle `for`:**
+\`\`\`bash
+for i in {1..5}
+do
+   echo "Repetición número $i"
+done
+\`\`\`
 
 ---
 
-## 🏆 RETO INTEGRAL: "El Automatizador"
-Vas a crear un script que prepare automáticamente un entorno de trabajo y luego subirás todo a GitHub.
+## 🔗 PARTE 4: Git (Guardar en la nube)
+1. `git add .` (Preparar)
+2. `git commit -m "Mensaje"` (Guardar)
+3. `git push` (Subir)
 
-**Paso 1: Crear el Script de Instalación**
-Crea un archivo llamado `setup_proyecto.sh` con el siguiente contenido (usa `nano`):
+---
 
-```bash
+## 🏆 RETO FINAL: "El Generador de Cultivos"
+
+**Misión:** Eres el ingeniero encargado de configurar 3 zonas de monitoreo. No vas a crear las carpetas y códigos a mano. Harás un script que lo haga por ti.
+
+**PASO 1: Crea el script maestro**
+Crea un archivo `deploy.sh` usando `nano` y escribe este código exacto:
+
+\`\`\`bash
 #!/bin/bash
-echo "--- 🚀 Iniciando configuración automática del entorno ---"
 
-# 1. Crear estructura de carpetas
-mkdir -p datos resultados logs
-echo "✅ Carpetas creadas: datos, resultados, logs."
+echo "--- 🚜 INICIANDO DESPLIEGUE AUTOMÁTICO ---"
 
-# 2. Generar un log de inicio
-date > logs/inicio_proyecto.txt
-echo "✅ Log de fecha generado."
+# Bucle para crear 3 zonas (Zona 1, Zona 2, Zona 3)
+for i in {1..3}
+do
+    echo "Configurando Zona $i..."
+    
+    # 1. Crear carpeta iterativa
+    mkdir -p "zona_$i/sensores"
+    
+    # 2. Crear un script de Python DENTRO de esa carpeta usando CAT
+    # Fíjate cómo inyectamos la variable $i dentro del código Python
+    cat << FIN_PYTHON > "zona_$i/sensores/main.py"
+import random
 
-# 3. Crear archivo de configuración base
-echo "status=inactivo" > config.cfg
+def leer_sensor():
+    temperatura = random.uniform(20, 35)
+    humedad = random.uniform(40, 80)
+    print(f"📡 ZONA $i reportando: Temp={temperatura:.1f}°C, Hum={humedad:.1f}%")
 
-# 4. Activar el sistema automáticamente usando sed
-sed -i 's/inactivo/ACTIVO/g' config.cfg
-echo "✅ Sistema activado en config.cfg"
+if __name__ == "__main__":
+    leer_sensor()
+FIN_PYTHON
 
-echo "--- 🏁 Entorno listo para trabajar ---"
+done
+
+echo "--- ✅ DESPLIEGUE TERMINADO ---"
+echo "Prueba ejecutando: python zona_1/sensores/main.py"
+\`\`\`
+
+**PASO 2: Ejecuta y Prueba**
+1. Dale permisos: `chmod +x deploy.sh`
+2. Ejecuta el generador: `./deploy.sh`
+3. Verifica las carpetas y prueba el código Python generado.
+
+**PASO 3: Sube tu tarea**
+Usa Git para subir el script y las carpetas al repositorio.
