@@ -1,85 +1,86 @@
-# 🚜 Taller 1: Herramientas del Agrónomo Digital (Consola y Git)
+# 🏋️ Entrenamiento Básico: Gestión de Archivos y Directorios
 
-Bienvenido. En este curso no solo aprenderás IA, aprenderás a gestionar proyectos de software profesionalmente.
-Hoy dominaremos dos herramientas:
-1.  **La Terminal (Bash):** Tu navaja suiza para moverte por el sistema.
-2.  **Git:** Tu libro de actas o sistema de trazabilidad digital.
+En este taller dominaremos los 4 movimientos fundamentales del sistema operativo.
+**Regla de oro:** No uses el mouse.
 
 ---
 
-## 📍 PARTE 1: La Terminal (El Terreno)
-Imagina que la terminal es el campo. Aquí damos órdenes directas sin usar el mouse.
+## 1. CREACIÓN (`mkdir` y `touch`)
+Cómo crear estructuras desde la nada.
 
-### 1. Ubicación y Visión (`pwd`, `ls`)
-* **`pwd`** (Print Working Directory): ¿En qué lote de la finca estoy parado?
-* **`ls`** (List): ¿Qué cultivos o herramientas tengo aquí?
-* **`ls -l`**: Muestra detalles (quién es el dueño, tamaño, fecha).
+* **`mkdir nombre`**: Crea una carpeta (Make Directory).
+* **`mkdir -p a/b/c`**: Crea una ruta completa de carpetas una dentro de otra (Parents).
+* **`touch archivo.txt`**: Crea un archivo vacío instantáneamente.
 
-> **👨‍🌾 Ejercicio 1:**
-> 1. Escribe `ls` y mira qué carpetas existen.
-> 2. Escribe `ls -l` y observa la diferencia.
-
-### 2. Desplazamiento (`cd`)
-* **`cd nombre_carpeta`**: Entrar a un lote.
-* **`cd ..`**: Regresar a la casa principal (atrás).
-* **`cd ~`**: Ir directo al inicio (Home).
-
-> **👨‍🌾 Ejercicio 2:**
-> 1. Entra a la semana 1: `cd semana_01`
-> 2. Entra a datos: `cd datos`
-> 3. Verifica dónde estás: `pwd`
-> 4. Vuelve al inicio del repositorio: `cd ../..` (saltamos 2 atrás).
-
-### 3. Sembrar y Escribir (`mkdir`, `touch`, `echo`)
-* **`mkdir nombre`**: Crea una carpeta nueva.
-* **`touch archivo.txt`**: Crea un archivo vacío.
-* **`echo "Texto" > archivo.txt`**: Crea un archivo y le escribe algo adentro inmediatamente.
-
-> **👨‍🌾 Ejercicio 3:**
-> 1. Crea una carpeta de prácticas: `mkdir practicas_campo`
-> 2. Entra en ella: `cd practicas_campo`
-> 3. Crea una nota rápida: `echo "Hoy llovió 20mm" > clima.txt`
-> 4. Lee la nota con: `cat clima.txt`
-
-### 4. Limpieza (`rm`)
-⚠️ **PELIGRO:** Aquí no hay papelera de reciclaje.
-* **`rm archivo`**: Elimina un archivo.
-* **`rm -r carpeta`**: Elimina una carpeta completa.
+> **👉 PRÁCTICA 1:**
+> 1. Asegúrate de estar en `semana_01`: `cd semana_01` (o verifica con `pwd`).
+> 2. Crea una carpeta llamada `laboratorio`: `mkdir laboratorio`
+> 3. Entra en ella: `cd laboratorio`
+> 4. Crea una estructura profunda para organizar materias:
+>    `mkdir -p universidad/semestre1/matematicas`
+> 5. Crea un archivo vacío dentro de esa carpeta final:
+>    `touch universidad/semestre1/matematicas/notas.txt`
+> 6. Verifica todo el árbol visualmente (si tienes el comando `tree`) o navegando.
 
 ---
 
-## 🔗 PARTE 2: Git (Trazabilidad y Calidad)
-En agroindustria, si no está documentado, no existe. **Git** es tu sistema de certificación. Nos permite guardar la historia de cada cambio.
+## 2. COPIADO (`cp`)
 
-El ciclo de vida de un cambio (El flujo de trabajo):
+Cómo duplicar información (Backup).
 
-### 1. `git status` (La Inspección)
-Te dice qué ha cambiado en tu finca desde la última vez.
-* *Rojo:* Cambios sin rastrear.
-* *Verde:* Cambios listos para guardarse.
+* **`cp archivo_origen destino`**: Copia un archivo.
+* **`cp -r carpeta_origen destino`**: Copia una carpeta **y todo su contenido** (Recursive). **¡Importante el -r!**
 
-### 2. `git add .` (La Cosecha)
-Selecciona todos los cambios y los pone en la "caja" para ser enviados. Es decir, preparas los archivos para el registro.
-
-### 3. `git commit -m "Mensaje"` (El Sellado)
-Cierra la caja y le pone una etiqueta oficial.
-* Ejemplo: `git commit -m "Agregué datos de temperatura"`
-* ⚠️ El mensaje es obligatorio. Es tu bitácora.
-
-### 4. `git push` (El Envío)
-Sube tus cambios confirmados a la nube (GitHub). Es como enviar el camión al puerto.
+> **👉 PRÁCTICA 2:**
+> (Seguimos dentro de `laboratorio`)
+> 1. Crea un archivo de prueba: `touch reporte_final.txt`
+> 2. Haz una copia de seguridad: `cp reporte_final.txt reporte_final_backup.txt`
+> 3. Verifica que ahora tienes dos archivos idénticos con `ls`.
+> 4. Intenta copiar la carpeta `universidad` a una llamada `universidad_backup`.
+>    *Intento fallido:* `cp universidad universidad_backup` (Te dará error).
+>    *Intento correcto:* `cp -r universidad universidad_backup`
 
 ---
 
-## 🏆 RETO FINAL DE LA SEMANA
-¡Vamos a simular un día de trabajo real! Sigue estos pasos uno por uno en tu terminal:
+## 3. MOVIMIENTO Y RENOMBRADO (`mv`)
+En Linux, "Mover" y "Cambiar nombre" son el mismo comando.
 
-1.  **Prepárate:** Asegúrate de estar en la carpeta principal del proyecto.
-2.  **Crea:** Genera un archivo con tu nombre: `echo "Estudiante: Juan Perez" > asistencia.txt`
-3.  **Inspecciona:** Ejecuta `git status`. (Deberías ver `asistencia.txt` en rojo).
-4.  **Cosecha:** Ejecuta `git add .`
-5.  **Verifica:** Ejecuta `git status` de nuevo. (Ahora debería estar verde).
-6.  **Registra:** Ejecuta `git commit -m "Registrando mi asistencia a la Clase 1"`.
-7.  **Envía:** Ejecuta `git push`.
+* **`mv archivo ruta_nueva`**: Mueve el archivo a otro lugar.
+* **`mv nombre_viejo nombre_nuevo`**: Le cambia el nombre (se "mueve" sobre sí mismo).
 
-**✅ Si al final GitHub no te dio errores, ¡felicidades! Eres oficialmente un Agrónomo Digital.**
+> **👉 PRÁCTICA 3:**
+> 1. Vamos a cambiar el nombre del backup:
+>    `mv reporte_final_backup.txt reporte_respaldo_2024.txt`
+> 2. Vamos a mover ese respaldo adentro de la carpeta `universidad`:
+>    `mv reporte_respaldo_2024.txt universidad/`
+> 3. Entra a `universidad` y verifica que el archivo llegó ahí:
+>    `cd universidad`
+>    `ls`
+
+---
+
+## 4. ELIMINACIÓN (`rm`)
+⚠️ **PELIGRO:** Aquí no hay "Papelera de Reciclaje". Lo que se borra, se va para siempre.
+
+* **`rm archivo`**: Borra un archivo.
+* **`rm -r carpeta`**: Borra una carpeta y todo lo que tiene dentro.
+* **`rm -rf carpeta`**: Borra todo a la fuerza sin preguntar (Force). **Usar con precaución.**
+
+> **👉 PRÁCTICA 4 (Limpieza):**
+> 1. Vuelve a la raíz del laboratorio: `cd ..` (o los necesarios hasta volver).
+> 2. Borra el archivo original: `rm reporte_final.txt`
+> 3. Borra la carpeta de backup completa: `rm -r universidad_backup`
+> 4. Verifica que ya no existen con `ls`.
+
+---
+
+## 🏆 RETO INTEGRAL: "El Arquitecto"
+Combina todo lo aprendido. Escribe los comandos para lograr esto:
+
+1. Crear una carpeta `proyecto_alpha`.
+2. Crear dentro tres subcarpetas: `docs`, `img`, `code`.
+3. Crear un archivo `main.py` dentro de `code`.
+4. Hacer una copia de toda la carpeta `code` y llamarla `code_v1`.
+5. Borrar la carpeta `img` porque no se usará.
+
+*(Solución al final de la clase)*
