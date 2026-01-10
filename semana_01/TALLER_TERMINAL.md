@@ -62,7 +62,46 @@ done
 3. `git push` (Subir)
 
 ---
+## PARTE 5:📝 Gestión de Archivos
 
+Vamos a manipular ese archivo de datos.
+
+### a. Lectura de Archivos (El CSV perdido)
+Encontramos un archivo `produccion_lote.csv`. Vamos a leerlo desde la terminal.
+* **`cat datos/produccion_lote.csv`**: Imprime todo el contenido en pantalla.
+* **`head -n 2 datos/produccion_lote.csv`**: Muestra solo las primeras 2 líneas (útil para archivos gigantes).
+
+### b. Copias de Seguridad (`cp`)
+Imagina que vas a procesar los datos, pero no quieres dañar el original. Hagamos un backup.
+* **`cp datos/produccion_lote.csv datos/backup_lote.csv`**: Crea una copia exacta.
+* Comprueba con `ls datos/` que ahora existan dos archivos.
+
+### c. Organización (`mkdir` y `mv`)
+Vamos a crear una carpeta para los respaldos y mover el archivo ahí.
+* **`mkdir respaldos`**: Crea la carpeta.
+* **`mv datos/backup_lote.csv respaldos/`**: Mueve el archivo dentro de la nueva carpeta.
+
+### d. Limpieza (`rm`)
+El jefe dice que el respaldo ya no es necesario.
+* **`rm -rf respaldos`**: ⚠️ Borra la carpeta y todo lo que tenga dentro. ¡Cuidado con este comando!
+
+---
+
+## 📝 PARTE 6: Edición y Automatización
+
+### 1. El Editor (`nano`)
+* **`nano notas.txt`**: Escribe una nota rápida sobre lo que has aprendido hoy. `Ctrl+O` (Guardar), `Ctrl+X` (Salir).
+
+### 2. Escritura Automática (`cat` + Redirección)
+Crearemos un archivo de configuración sin abrir el editor.
+\`\`\`bash
+cat << EOF > config.env
+MODO=PRODUCCION
+DB_HOST=localhost
+EOF
+\`\`\`
+
+---
 ## 🏆 RETO FINAL: "El Generador de Cultivos"
 
 **Misión:** Eres el ingeniero encargado de configurar 3 zonas de monitoreo. No vas a crear las carpetas y códigos a mano. Harás un script que lo haga por ti.
