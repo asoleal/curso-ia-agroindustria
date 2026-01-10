@@ -13,3 +13,6 @@ Bienvenido a la primera semana. Tu objetivo es dominar las herramientas básicas
 Ejecuta el script de prueba para asegurar que Python y tu terminal están listos:
 ```bash
 python test_entorno.py
+```
+
+### 2. Ahora desarrolla el taller de la semana TALLER_TERMINAL.MD
