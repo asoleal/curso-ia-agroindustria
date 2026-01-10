@@ -1,20 +1,17 @@
-# 🐍 Semana 02: Python para Ingeniería e IA
+# 🗺️ Hoja de Ruta: Semana 02
 
-Esta semana está dividida en dos niveles. Debes completar ambos para dominar las bases de la Inteligencia Artificial.
+Bienvenido. No te abrumes con los archivos. Solo sigue este orden estricto:
 
-## 🟢 Nivel 1: Fundamentos de Datos (La Estructura)
-**Ubicación:** `nivel_1_fundamentos/`
-Antes de correr, debes caminar. Aquí aprenderás cómo Python guarda la información.
-* **Conceptos:** Listas vs Diccionarios (clave para JSON y APIs), Bucles y Funciones.
-* **Objetivo:** Aprender a limpiar y organizar datos crudos.
+## 1️⃣ Paso 1: La Lógica (Carpeta 01)
+Entra a la carpeta `01_Fundamentos_Logica`.
+* **Objetivo:** Aprender a limpiar datos "sucios" usando listas y diccionarios.
+* **Tu tarea:** Ejecutar el script `main.py` de esa carpeta y resolver los 3 ejercicios que están dentro.
 
-## 🔴 Nivel 2: Ingeniería de Datos (El Motor)
-**Ubicación:** `nivel_2_profesional/`
-Aquí damos el salto a la programación profesional.
-* **Conceptos:** Programación Orientada a Objetos (Clases) y **NumPy** (Matrices/Tensores).
-* **Objetivo:** Pensar en "Vectores" en lugar de bucles (Velocidad de cómputo para IA).
+## 2️⃣ Paso 2: La Potencia (Carpeta 02)
+Entra a la carpeta `02_Numpy_Vectorizacion`.
+* **Objetivo:** Entender cómo la IA procesa imágenes y grandes datos (Matrices).
+* **Tu tarea:** Ejecutar el script `simulacion.py` y completar el reto del satélite.
 
 ---
-### 🛠️ Instalación Previa
-Para el nivel avanzado necesitas `numpy`. Instálalo ejecutando:
-`pip install numpy`
+**Comando rápido para empezar:**
+`cd 01_Fundamentos_Logica`
