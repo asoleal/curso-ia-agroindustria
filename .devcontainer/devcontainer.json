@@ -6,33 +6,38 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
+        "ms-python.vscode-pylance",
         "ms-toolsai.jupyter",
+        "ms-python.black-formatter", 
+        "ms-python.pylint",
         "james-yu.latex-workshop",
         "MS-CEINTL.vscode-language-pack-es",
-        "eamodio.gitlens"
+        "eamodio.gitlens",
+        "donjayamanne.githistory"
       ],
       "settings": {
+        "editor.formatOnSave": true,
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+          }
+        },
         "latex-workshop.view.pdf.viewer": "tab",
         "latex-workshop.latex.autoBuild.run": "onSave",
-        "python.formatting.provider": "black",
-        "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true,
-        "python.linting.flake8Enabled": true
+        "latex-workshop.latex.outDir": "%DIR%/build",
+        "files.trimTrailingWhitespace": true
       }
     }
   },
 
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y texlive-latex-extra texlive-lang-spanish texlive-science latexmk graphviz build-essential && pip install --upgrade pip && pip install -r requirements.txt",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y texlive-latex-extra texlive-lang-spanish texlive-science latexmk graphviz build-essential && pip install --upgrade pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi",
 
   "features": {
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/docker-in-docker:1": {}
+    "ghcr.io/devcontainers/features/git:1": {}
   },
 
   "forwardPorts": [8888, 8000],
 
-  "remoteUser": "vscode",
-
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
-  "workspaceFolder": "/workspace"
+  "remoteUser": "vscode"
 }
