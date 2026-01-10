@@ -1,86 +1,108 @@
-# 🏋️ Entrenamiento Básico: Gestión de Archivos y Directorios
+# 🛠️ Taller 1: Fundamentos de Ingeniería de Software (Terminal, Git y Scripting)
 
-En este taller dominaremos los 4 movimientos fundamentales del sistema operativo.
-**Regla de oro:** No uses el mouse.
-
----
-
-## 1. CREACIÓN (`mkdir` y `touch`)
-Cómo crear estructuras desde la nada.
-
-* **`mkdir nombre`**: Crea una carpeta (Make Directory).
-* **`mkdir -p a/b/c`**: Crea una ruta completa de carpetas una dentro de otra (Parents).
-* **`touch archivo.txt`**: Crea un archivo vacío instantáneamente.
-
-> **👉 PRÁCTICA 1:**
-> 1. Asegúrate de estar en `semana_01`: `cd semana_01` (o verifica con `pwd`).
-> 2. Crea una carpeta llamada `laboratorio`: `mkdir laboratorio`
-> 3. Entra en ella: `cd laboratorio`
-> 4. Crea una estructura profunda para organizar materias:
->    `mkdir -p universidad/semestre1/matematicas`
-> 5. Crea un archivo vacío dentro de esa carpeta final:
->    `touch universidad/semestre1/matematicas/notas.txt`
-> 6. Verifica todo el árbol visualmente (si tienes el comando `tree`) o navegando.
+Bienvenido. En este taller dejarás de ser un usuario que solo hace "clic" para convertirte en un creador que da órdenes directas al sistema operativo. Aprenderemos a navegar, automatizar tareas y gestionar versiones de nuestro trabajo.
 
 ---
 
-## 2. COPIADO (`cp`)
+## 📍 PARTE 1: El Terreno (Navegación y Archivos)
+Antes de construir, necesitamos dominar el entorno. **Regla de oro:** No uses el mouse.
 
-Cómo duplicar información (Backup).
+### 1. Ubicación y Movimiento
+* **`pwd`**: (Print Working Directory) ¿Dónde estoy parado?
+* **`ls`**: (List) Muestra qué hay en la carpeta.
+    * `ls -l`: Ver detalles (tamaño, permisos).
+    * `ls -a`: Ver ocultos.
+* **`cd carpeta`**: Entrar a una carpeta.
+    * `cd ..`: Regresar atrás.
+    * `cd ~`: Ir al inicio (Home).
 
-* **`cp archivo_origen destino`**: Copia un archivo.
-* **`cp -r carpeta_origen destino`**: Copia una carpeta **y todo su contenido** (Recursive). **¡Importante el -r!**
+### 2. Gestión de Archivos (Crear, Copiar, Borrar)
+* **`mkdir nombre`**: Crea una carpeta.
+    * `mkdir -p a/b/c`: Crea una jerarquía completa.
+* **`touch archivo.txt`**: Crea un archivo vacío.
+* **`cp origen destino`**: Copia archivos.
+    * `cp -r carpeta destino`: Copia carpetas completas (**r**ecursivo).
+* **`mv origen destino`**: Mueve o cambia el nombre.
+* **`rm archivo`**: ⚠️ Borra un archivo para siempre.
+    * `rm -rf carpeta`: Borra una carpeta y todo su contenido a la fuerza.
 
-> **👉 PRÁCTICA 2:**
-> (Seguimos dentro de `laboratorio`)
-> 1. Crea un archivo de prueba: `touch reporte_final.txt`
-> 2. Haz una copia de seguridad: `cp reporte_final.txt reporte_final_backup.txt`
-> 3. Verifica que ahora tienes dos archivos idénticos con `ls`.
-> 4. Intenta copiar la carpeta `universidad` a una llamada `universidad_backup`.
->    *Intento fallido:* `cp universidad universidad_backup` (Te dará error).
->    *Intento correcto:* `cp -r universidad universidad_backup`
-
----
-
-## 3. MOVIMIENTO Y RENOMBRADO (`mv`)
-En Linux, "Mover" y "Cambiar nombre" son el mismo comando.
-
-* **`mv archivo ruta_nueva`**: Mueve el archivo a otro lugar.
-* **`mv nombre_viejo nombre_nuevo`**: Le cambia el nombre (se "mueve" sobre sí mismo).
-
-> **👉 PRÁCTICA 3:**
-> 1. Vamos a cambiar el nombre del backup:
->    `mv reporte_final_backup.txt reporte_respaldo_2024.txt`
-> 2. Vamos a mover ese respaldo adentro de la carpeta `universidad`:
->    `mv reporte_respaldo_2024.txt universidad/`
-> 3. Entra a `universidad` y verifica que el archivo llegó ahí:
->    `cd universidad`
->    `ls`
+> **🧠 Práctica Rápida:**
+> 1. Crea una carpeta `lab_01` y entra en ella.
+> 2. Crea un archivo `experimento.txt`.
+> 3. Hazle una copia de seguridad: `cp experimento.txt backup.txt`.
+> 4. Borra el original: `rm experimento.txt`.
 
 ---
 
-## 4. ELIMINACIÓN (`rm`)
-⚠️ **PELIGRO:** Aquí no hay "Papelera de Reciclaje". Lo que se borra, se va para siempre.
+## 📝 PARTE 2: Edición y Manipulación (`nano`, `cat`, `sed`)
+No necesitamos Word para escribir código o configuaciones.
 
-* **`rm archivo`**: Borra un archivo.
-* **`rm -r carpeta`**: Borra una carpeta y todo lo que tiene dentro.
-* **`rm -rf carpeta`**: Borra todo a la fuerza sin preguntar (Force). **Usar con precaución.**
+### 1. El Editor (`nano`)
+* **`nano archivo.txt`**: Abre un editor en la terminal.
+    * **Guardar:** `Ctrl + O` -> `Enter`.
+    * **Salir:** `Ctrl + X`.
 
-> **👉 PRÁCTICA 4 (Limpieza):**
-> 1. Vuelve a la raíz del laboratorio: `cd ..` (o los necesarios hasta volver).
-> 2. Borra el archivo original: `rm reporte_final.txt`
-> 3. Borra la carpeta de backup completa: `rm -r universidad_backup`
-> 4. Verifica que ya no existen con `ls`.
+### 2. El Visor (`cat`)
+* **`cat archivo.txt`**: Muestra el contenido sin abrir el editor.
+
+### 3. El Cirujano de Texto (`sed`)
+Imagina que tienes que corregir una palabra en 1,000 líneas.
+* **Sintaxis:** `sed -i 's/viejo/nuevo/g' archivo.txt`
+    * `-i`: Guarda los cambios en el archivo (in-place).
+    * `s`: Sustituir.
+    * `g`: Global (todas las ocurrencias).
+
+> **🧠 Práctica de Edición:**
+> 1. Crea un archivo: `echo "Hola Mundo" > saludo.txt`
+> 2. Usa sed para cambiarlo: `sed -i 's/Mundo/Ingeniero/g' saludo.txt`
+> 3. Verifica: `cat saludo.txt` (Debería decir "Hola Ingeniero").
 
 ---
 
-## 🏆 RETO INTEGRAL: "El Arquitecto"
-Combina todo lo aprendido. Escribe los comandos para lograr esto:
+## 🤖 PARTE 3: Scripting (Automatización)
+Aquí ocurre la magia. Un **Script (.sh)** es un archivo con una lista de comandos que la computadora ejecuta por ti.
 
-1. Crear una carpeta `proyecto_alpha`.
-2. Crear dentro tres subcarpetas: `docs`, `img`, `code`.
-3. Crear un archivo `main.py` dentro de `code`.
-4. Hacer una copia de toda la carpeta `code` y llamarla `code_v1`.
-5. Borrar la carpeta `img` porque no se usará.
+### Pasos para crear un script:
+1.  **Crear:** `nano programa.sh`
+2.  **Cabecera:** La primera línea debe ser `#!/bin/bash`.
+3.  **Permisos:** Debes hacerlo ejecutable: `chmod +x programa.sh`.
+4.  **Ejecutar:** `./programa.sh`
 
-*(Solución al final de la clase)*
+---
+
+## 🔗 PARTE 4: Git (Trazabilidad y Control)
+Git es la bitácora de tu proyecto. Guarda la historia de cada cambio.
+
+1.  **`git status`**: ¿Qué ha cambiado? (Rojo = sin guardar, Verde = listo).
+2.  **`git add .`**: Preparar todos los cambios (La Cosecha).
+3.  **`git commit -m "Mensaje"`**: Guardar la versión en el historial (El Sello).
+4.  **`git push`**: Subir cambios a la nube (GitHub).
+
+---
+
+## 🏆 RETO INTEGRAL: "El Automatizador"
+Vas a crear un script que prepare automáticamente un entorno de trabajo y luego subirás todo a GitHub.
+
+**Paso 1: Crear el Script de Instalación**
+Crea un archivo llamado `setup_proyecto.sh` con el siguiente contenido (usa `nano`):
+
+```bash
+#!/bin/bash
+echo "--- 🚀 Iniciando configuración automática del entorno ---"
+
+# 1. Crear estructura de carpetas
+mkdir -p datos resultados logs
+echo "✅ Carpetas creadas: datos, resultados, logs."
+
+# 2. Generar un log de inicio
+date > logs/inicio_proyecto.txt
+echo "✅ Log de fecha generado."
+
+# 3. Crear archivo de configuración base
+echo "status=inactivo" > config.cfg
+
+# 4. Activar el sistema automáticamente usando sed
+sed -i 's/inactivo/ACTIVO/g' config.cfg
+echo "✅ Sistema activado en config.cfg"
+
+echo "--- 🏁 Entorno listo para trabajar ---"
