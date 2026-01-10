@@ -1,22 +1,29 @@
-# 🛠️ Taller 1: Fundamentos de Ingeniería (Terminal)
+# 🚜 Taller 01: Dominando la Terminal Linux
 
-## 📍 PARTE 1: Navegación
-Usa `cd`, `ls` y `mkdir` para explorar.
+**Objetivo:** Dejar de usar el mouse y empezar a controlar el sistema como un Ingeniero de Software.
+**Contexto:** Eres el administrador de un servidor agrícola remoto. No tienes interfaz gráfica, solo texto.
 
-## 🏆 RETO FINAL: "El Generador de Cultivos"
-Crea un archivo llamado `deploy.sh` con este contenido:
+---
 
-\`\`\`bash
-#!/bin/bash
-echo "--- 🚜 INICIANDO DESPLIEGUE ---"
-for i in {1..3}
-do
-    echo "Configurando Zona $i..."
-    mkdir -p "zona_$i/sensores"
-    cat << FIN_PYTHON > "zona_$i/sensores/main.py"
-import random
-print(f"📡 ZONA $i: Temp={random.uniform(20,35):.1f}")
-FIN_PYTHON
-done
-\`\`\`
-Ejecútalo con `./deploy.sh` y sube los cambios a Git.
+## 📍 Parte 1: Reconocimiento del Terreno
+Lo primero es saber dónde estás parado y qué hay alrededor.
+
+1. **¿Dónde estoy?**
+   Escribe `pwd` (Print Working Directory).
+   > Debería mostrarte la ruta completa a `semana_01`.
+
+2. **¿Qué hay aquí?**
+   Escribe `ls` (List).
+   > Verás los archivos.
+   > Intenta `ls -F` (Para ver cuáles son carpetas).
+   > Intenta `ls -R` (Para ver todo el árbol de archivos recursivamente).
+
+---
+
+## 📂 Parte 2: Creación de Infraestructura
+Vamos a simular que creamos zonas de cultivo.
+
+1. **Crear carpetas:**
+   ```bash
+   mkdir zona_norte
+   mkdir zona_sur
