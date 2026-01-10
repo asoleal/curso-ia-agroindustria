@@ -1,17 +1,11 @@
-# 🌾 Curso: IA Aplicada a Procesos Agroindustriales
+# 🎓 Curso de Ingeniería de Software e IA
 
-Bienvenido a tu **Bitácora Digital**. Este repositorio contiene todas las herramientas pre-instaladas que necesitas: Python, Jupyter y LaTeX.
+Bienvenido al repositorio del curso. Aquí encontrarás los talleres semanales.
 
-## 🚀 Instrucciones de Inicio (Módulo 1)
+## 📂 Estructura del Curso
+* **`semana_01/`**: Terminal, Git y Scripting Básico (Bash).
+* **`semana_02/`**: Python para Ingeniería de Datos (Lógica y NumPy).
+* **`reference/`**: (Uso interno) Código de referencia e implementaciones modelo.
 
-1. Haz clic en el botón verde **"Code"** (arriba a la derecha).
-2. Selecciona la pestaña **"Codespaces"**.
-3. Haz clic en **"Create codespace on main"**.
-4. Espera a que termine la configuración automática (puede tardar unos minutos la primera vez).
-
-## 🧪 Validar tu Entorno
-
-Una vez dentro del Codespace, abre la terminal y ejecuta este comando para verificar que todo funciona:
-
-```bash
-python scripts/test_entorno.py
+## 🚀 ¿Cómo empezar?
+Entra a la carpeta de la semana correspondiente y lee el archivo `README.md` que encontrarás dentro.
