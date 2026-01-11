@@ -7,85 +7,71 @@
 
 ## 📖 Introducción Técnica: La Arquitectura de Memoria
 
-En Ingeniería de Datos, la velocidad no depende solo de qué tan rápido es tu procesador (CPU), sino de qué tan eficientemente accedes a la memoria RAM.
+En Ingeniería de Datos, la velocidad no depende solo del procesador (CPU), sino de la eficiencia en el acceso a la memoria RAM.
 
 ### 1. El Cuello de Botella de Python (Listas)
-Las listas en Python son flexibles pero ineficientes. Son colecciones de **punteros** dispersos en la memoria.
-* **Visualización:** Imagina a un bibliotecario que debe buscar libros (datos) que están esparcidos aleatoriamente por toda la biblioteca.
-* **Costo:** La CPU gasta más tiempo "buscando" direcciones de memoria y verificando tipos de datos (`int`, `float`, `str`) que haciendo la suma matemática.
+Las listas en Python son flexibles pero ineficientes (colecciones de punteros dispersos).
+* **Visualización:** Imagina buscar libros esparcidos aleatoriamente por toda una biblioteca.
+* **Costo:** La CPU gasta más tiempo "buscando" direcciones que calculando.
 
 ### 2. La Potencia de NumPy (Arrays)
 NumPy utiliza bloques de **memoria contigua** (como C o Fortran).
-* **Visualización:** Imagina una cinta transportadora donde todos los datos llegan ordenados uno tras otro.
-* **SIMD:** La CPU carga un bloque entero en su caché y usa instrucciones especiales (Single Instruction, Multiple Data) para operar 4, 8 o 16 números en un solo ciclo de reloj.
+* **Visualización:** Imagina una cinta transportadora donde los datos llegan ordenados.
+* **SIMD:** La CPU carga bloques enteros y opera múltiples datos en un solo ciclo de reloj.
 
 
 
 ---
 
-## 🧪 El Experimento: Benchmark (`simulacion.py`)
+## 🧪 El Experimento Base
 
-Realizaremos una prueba de estrés procesando **1,000,000 de registros** de plantas simuladas (equivalente a 100 hectáreas de datos).
+Realizaremos una prueba de estrés procesando **1,000,000 de registros**.
 
 ### El Escenario
-Calculamos el "Índice de Vigor" para un cultivo masivo usando la fórmula:
+Calculamos el "Índice de Vigor" para un cultivo masivo:
 $$Vigor = (Altura \times Grosor) + 0.5$$
 
-### Los Contendientes
-1.  **Enfoque Nativo (Lento):** Listas estándar + Bucle `for`.
-    * *Complejidad:* $O(N)$ con alto overhead de interpretación.
-2.  **Enfoque Vectorizado (Rápido):** Arrays de NumPy + Operación Matricial.
-    * *Complejidad:* $O(N)$ optimizado en C.
+### Instrucciones de Ejecución
+1.  Ubicado en la carpeta raíz `semana_02`, ejecuta:
+    ```bash
+    python 02_Numpy_Vectorizacion/simulacion.py
+    ```
+2.  **Observa la terminal:** Verás que NumPy es entre 50x y 100x más rápido que el Python estándar.
 
 ---
 
-## ⚙️ Laboratorio: Instrucciones Paso a Paso
+## 🚀 Tu Misión (Entregable Obligatorio)
 
-No te limites a ejecutar el código. Sigue estos pasos para entender los límites de tu hardware.
+Para completar este módulo, debes modificar el código original para demostrar que puedes vectorizar operaciones matemáticas complejas.
 
-### Paso 1: La Línea Base (Benchmark)
-Ejecuta el script para establecer una referencia.
-```bash
-python simulacion.py
-```
+### Paso 1: Implementar el Reto Trigonométrico
+Modifica el archivo `simulacion.py`. Cambia la fórmula simple por una operación pesada que incluya el **Seno (sin)**:
 
-> **Tu Misión:** Anota el "Speedup" (veces más rápido). Debería estar entre **50x y 100x**.
-
-### Paso 2: Análisis de Resultados
-Mira la salida en la terminal.
-
-* **Tiempo Python:** Probablemente 0.15s - 0.40s.
-* **Tiempo NumPy:** Probablemente 0.002s - 0.005s.
-
-> **Reflexión:** Si tuvieras que procesar imágenes satelitales (billones de pixeles), el método de Python tardaría **días**, mientras que NumPy tardaría **minutos**.
-
-### Paso 3: "Stress Test" (Prueba de Estrés)
-Vamos a llevar tu RAM al límite.
-
-1.  Abre `simulacion.py` en tu editor.
-2.  Busca la variable `N_PLANTAS = 1_000_000`.
-3.  Cámbiala a **10,000,000** (Diez millones).
-4.  Ejecuta de nuevo.
-
-> **Pregunta:** ¿Sigue siendo lineal el aumento de tiempo? ¿Notas que tu computador se congela un instante al crear las listas de Python?
-
----
-
-## 🧠 Reto de Ingeniería: Operaciones Complejas
-
-Modifica `simulacion.py` para agregar una operación más pesada y ver si NumPy sigue ganando.
-
-**Tu Tarea:**
-Cambia la fórmula del vigor para incluir una función trigonométrica (muy costosa para la CPU).
-
-1.  Importa math: `import math`
-2.  En el bucle Python, cambia la fórmula a:
+1.  Importa la librería matemática estándar: `import math`
+2.  **En el bucle Python (Lento):**
     ```python
+    # Cambia la multiplicación simple por esto:
     calculo = math.sin(alturas_list[i]) * grosores_list[i]
     ```
-3.  En NumPy, usa la versión vectorizada:
+3.  **En la versión NumPy (Rápida):**
     ```python
+    # Usa la función vectorizada universal (ufunc):
     vigor_np = np.sin(alturas_np) * grosores_np
     ```
 
-**¿El resultado?** Verás que la diferencia de velocidad se vuelve **aún mayor**, porque NumPy optimiza funciones matemáticas complejas mejor que Python puro.
+### Paso 2: Ejecutar y Registrar
+Vuelve a correr el script `python 02_Numpy_Vectorizacion/simulacion.py`.
+* Verás que la diferencia de velocidad es aún mayor (posiblemente >150x).
+
+### Paso 3: Documentar el Hallazgo
+Ve al final de tu archivo `simulacion.py` y agrega un comentario con tus resultados. Debe verse así:
+
+```python
+# ---------------------------------------------------------
+# REPORTE DE INGENIERÍA
+# ---------------------------------------------------------
+# Operación: Función Seno (Trigonométrica)
+# Tiempo Python: X.XX segundos
+# Tiempo NumPy:  X.XX segundos
+# Aceleración (Speedup): XXX veces más rápido
+# ---------------------------------------------------------

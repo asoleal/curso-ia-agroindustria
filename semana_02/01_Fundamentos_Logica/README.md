@@ -1,49 +1,75 @@
 # Módulo 1: Lógica Computacional y Validación de Datos 🛡️
 
-> **¿El problema?** En el mundo real, los sensores mienten. Un sensor de humedad puede reportar `-500%` si se rompe. Si tu código no detecta esto, tu IA tomará decisiones desastrosas (como inundar un cultivo).
-> **La solución:** Programación Defensiva.
+> **Concepto Clave:** "Fail Fast" (Fallar Rápido) y Diseño Defensivo.
+> **Objetivo:** Aprender a proteger tu código de datos basura ("Garbage In, Garbage Out").
 
 ---
 
-## 🏆 ¿Qué vas a lograr?
-Al finalizar este laboratorio, dejarás de usar `if/else` básicos para escribir **Software de Ingeniería**:
-1.  **Validar datos sucios** antes de que rompan tu sistema ("Sanitización").
-2.  **Aprender "Guard Clauses":** Una técnica para evitar el código "spaghetti" (anidación excesiva).
-3.  **Entender el "Cortocircuito":** Cómo hacer que Python sea eficiente dejando de calcular si ya sabe la respuesta.
+## 📖 Introducción Técnica: El Arte de Decir "No"
+
+En ingeniería de software crítica (como en medicina o agricultura), procesar un dato incorrecto es peor que no procesar nada. Si un sensor dice que la humedad es `-500%`, tu código no debe intentar corregirlo; debe detenerse inmediatamente.
+
+### 1. El Problema: "Arrow Code" (Código Flecha)
+Cuando usas muchos `if/else` anidados, el código toma forma de flecha hacia la derecha. Es difícil de leer y propenso a errores.
+
+
+
+### 2. La Solución: Guard Clauses (Cláusulas de Guardia)
+Invertimos la lógica. En lugar de verificar si todo está *bien* para entrar, verificamos si algo está *mal* para salir (`return`).
+* **Lógica Tradicional:** "Si el sistema está activo, entra. Si la humedad es válida, entra..."
+* **Lógica Defensiva:** "¿Sistema apagado? Fuera. ¿Humedad inválida? Fuera. (Si llegas aquí, todo está bien)".
 
 ---
 
-## 🧠 Conceptos Clave (Antes de empezar)
+## 🧪 Laboratorio: Tu Misión (Paso a Paso)
 
-### 1. Cláusulas de Guardia (Guard Clauses)
-En lugar de encerrar todo tu código en un `if` gigante, verificamos los errores primero y "retornamos" inmediatamente.
+El script `main.py` simula el cerebro de un sistema de riego. Actualmente funciona, pero le falta una regla de seguridad crítica.
 
-**❌ Código Novato (Nested Ifs):**
-```python
-if sistema_activo:
-    if humedad > 0:
-        if humedad < 100:
-            # Hacer cálculos...
-```
-
-## 🧪 Laboratorio: Tu Misión
-
-El script `main.py` simula un cerebro digital para un sistema de riego. Tu trabajo es ponerlo a prueba y entender cómo se protege a sí mismo.
-
-### Paso 1: Ejecución Base
-Corre el script tal como está para ver el diagnóstico de 4 casos predefinidos.
+### Paso 1: Ejecución y Diagnóstico
+Corre el script base para entender su comportamiento actual.
 ```bash
 python main.py
 ```
-### Paso 2: "Chaos Monkey" (Rompe el sistema)
-Abre el archivo `main.py` con tu editor de código. Ve al final, a la sección `if __name__ == "__main__":` y crea tus propios casos de prueba:
+> **Observa:** Mira cómo el sistema responde con mensajes claros ante "Sistema Inactivo" o "Datos Corruptos".
 
-1.  **Simula un sensor loco:** Llama a la función con `humedad = 500`. ¿Qué mensaje obtienes?
-2.  **Simula un fallo eléctrico:** Llama a la función con `sistema_activo = False`.
-3.  **Prueba el límite:** ¿Qué pasa si la humedad es exactamente `30`? (¿Riega o no riega?).
+### Paso 2: "Chaos Monkey" (Pruebas Destructivas)
+Vamos a intentar romper el código existente. Abre `main.py`, ve al final (sección `if __name__ == "__main__":`) y agrega estas líneas de prueba:
 
-### Paso 3: Reto de Código
-Modifica la función `validar_riego` dentro de `main.py` para agregar una **nueva regla de seguridad**:
+```python
+# Prueba de estrés manual
+print(validar_riego(humedad=500, temperatura=20, sistema_activo=True)) # ¿Detecta el error?
+print(validar_riego(humedad=30, temperatura=60, sistema_activo=True))  # ¿Detecta el calor extremo?
+```
+### Paso 3: Implementar la Regla de Fuego (Reto)
+Actualmente, si la temperatura es `60°C` (incendio), el sistema solo dice "Error de sensor" o intenta regar. Necesitamos una alerta específica.
 
-* Si la `temperatura` es mayor a `50°C`, el sistema debe retornar una `[ALERTA CRÍTICA]: Peligro de incendio`, sin importar la humedad.
-* *Pista:* Debes agregar esta "Guard Clause" antes de la lógica de riego.
+**Tu Tarea:**
+Modifica la función `validar_riego` en `main.py`. Agrega una nueva Cláusula de Guardia **después** de validar la integridad de los datos pero **antes** de la lógica de riego.
+
+
+
+* **Condición:** Si `temperatura > 50`.
+* **Acción:** Retornar exactamente el string `"[ALERTA CRÍTICA]: 🔥 Peligro de incendio detectado."`.
+
+---
+
+## 🚀 Entregable Obligatorio
+Para dar por finalizado este módulo, debes demostrar que tu nueva lógica funciona.
+
+1.  Asegúrate de haber modificado la función `validar_riego`.
+2.  Agrega el siguiente caso de prueba al final del archivo `main.py` (en el bloque `__main__`):
+
+    ```python
+    # CASO 5: PRUEBA DE FUEGO (Debe salir Alerta Crítica)
+    print(validar_riego(humedad=10, temperatura=55, sistema_activo=True))
+    ```
+
+3.  Ejecuta el script de nuevo. Si ves el mensaje `🔥 Peligro de incendio detectado`, has tenido éxito.
+
+### ✅ Confirmación de Entrega
+Sube el archivo modificado con tu nueva lógica de seguridad:
+
+```bash
+git add 01_Fundamentos_Logica/main.py
+git commit -m "Laboratorio Lógica: Implementada alerta crítica de incendio"
+git push origin main
