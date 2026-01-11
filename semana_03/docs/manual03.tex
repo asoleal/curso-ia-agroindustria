@@ -2,7 +2,6 @@
 
 % --- MOTOR DE FUENTES (XeLaTeX) ---
 \usepackage{fontspec}
-% Fuentes seguras de Linux (Arch Compatible)
 \setmainfont{DejaVu Sans}[
     BoldFont={DejaVu Sans Bold},
     ItalicFont={DejaVu Sans Oblique},
@@ -26,11 +25,13 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{tikz}
-\usetikzlibrary{shapes, arrows, positioning, babel, matrix}
+\usepackage{colortbl}
+\usetikzlibrary{shapes, arrows, positioning, babel, matrix, backgrounds}
 
 % --- GEOMETRÍA ---
-\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=4cm, marginparwidth=3cm}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
 \setlength{\headheight}{28pt}
+\setlength{\parskip}{0.5em}
 
 % --- COLORES ---
 \definecolor{primary}{RGB}{0, 85, 164}      % Azul Ingeniería
@@ -39,14 +40,17 @@
 \definecolor{pandas}{RGB}{19, 7, 84}        % Azul oscuro (Pandas)
 \definecolor{codebg}{RGB}{245, 247, 250}
 
-% --- CAJAS ---
+% --- CAJAS PERSONALIZADAS (CORREGIDAS) ---
 \newtcolorbox{conceptbox}[1]{
   colback=blue!5!white, colframe=primary, title=#1, fonttitle=\bfseries,
   boxrule=0.5mm, arc=2mm, shadow={2mm}{-2mm}{0mm}{black!20}
 }
 
+% FIX: El emoji ahora es parte del titulo, no un parametro 'icon'
 \newtcolorbox{agrobox}[1]{
-  colback=green!5!white, colframe=accent, title=#1, fonttitle=\bfseries,
+  colback=green!5!white, colframe=accent,
+  title=\textbf{🌱} #1,
+  fonttitle=\bfseries,
   boxrule=0.5mm, arc=2mm
 }
 
@@ -55,11 +59,16 @@
   boxrule=0.5mm, arc=2mm
 }
 
-% --- ESTILO DE CÓDIGO (FIX EMOJIS) ---
+\newtcolorbox{ethicsbox}[1]{
+  colback=yellow!5!white, colframe=orange!75!black, title=#1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm
+}
+
+% --- ESTILO DE CÓDIGO ---
 \lstdefinestyle{pythonstyle}{
     backgroundcolor=\color{codebg},
     commentstyle=\color{gray}\itshape,
-    keywordstyle=\color{pandas}\bfseries, % Keywords estilo Pandas
+    keywordstyle=\color{pandas}\bfseries,
     numberstyle=\tiny\color{gray},
     stringstyle=\color{accent},
     basicstyle=\ttfamily\footnotesize,
@@ -71,7 +80,8 @@
     literate=
     {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
     {⚠}{{\textcolor{orange}{\bfseries !}}}1
-    {NaN}{{\textcolor{red}{\bfseries NaN}}}3 % Resaltar NaN en rojo
+    {NaN}{{\textcolor{red}{\bfseries NaN}}}3
+    {None}{{\textcolor{red}{\bfseries None}}}4
 }
 \lstset{style=pythonstyle}
 
@@ -79,10 +89,10 @@
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\textbf{Ingeniería de Software I}}
-\rhead{Semana 03: Pandas y Big Data}
-\rfoot{\thepage}
+\rhead{Módulo 2: Ciencia de Datos}
+\rfoot{Página \thepage}
 
-\title{\textbf{Domando Datos Reales con Pandas}\\ Limpieza, Análisis y Series Temporales}
+\title{\textbf{Manual Avanzado de Pandas}\\ Procesamiento de Datos para Agroindustria 4.0}
 \author{Curso de IA Aplicada al Agro}
 \date{\today}
 
@@ -92,165 +102,360 @@
 \tableofcontents
 \newpage
 
-\section*{Introducción: ¿Por qué NumPy no es suficiente?}
+\section*{Introducción: La Estructura de los Datos}
 
-En la Semana 02 aprendimos que NumPy es rapidísimo para matrices numéricas. Pero el mundo real no son solo números; son etiquetas, fechas y datos sucios.
-
-Imagina una tabla de Excel de una estación meteorológica. Tiene:
-\begin{itemize}
-    \item \textit{Fechas} (Time Series).
-    \item \textit{Texto} (Nombres de sensores, ubicación).
-    \item \textit{Huecos} (Celdas vacías porque se fue la luz).
-\end{itemize}
-
-Para esto existe \textbf{Pandas}. Es una librería construida sobre NumPy que añade etiquetas y manejo de errores.
+Antes de limpiar datos, debemos entender cómo Pandas los organiza en la memoria RAM. A diferencia de Excel, donde todo es una celda visual, Pandas distingue rigurosamente entre tipos de estructuras.
 
 \begin{center}
-\begin{tikzpicture}
-    % NumPy
-    \node (numpy) [draw=primary, thick, fill=blue!10, minimum width=3cm, minimum height=2cm, align=center] {
-        \textbf{NumPy Array}\\
-        Sólo Números\\
-        Indices: 0, 1, 2...
+\begin{tikzpicture}[node distance=2cm]
+    % Series
+    \node (series) [draw=accent, fill=green!5, rectangle, rounded corners, minimum width=3cm, minimum height=3cm, align=center] {
+        \textbf{Series (1D)}\\
+        \textit{"Una Columna"}\\
+        \rule{2.5cm}{0.5pt}\\
+        0: 25.4\\
+        1: 26.1\\
+        2: 24.8\\
+        ...\\
+        \textit{Un solo tipo de dato}
     };
 
-    % Flecha
-    \draw[->, ultra thick, gray] (numpy) -- ++(4,0) node[midway, above] {Evolución};
-
-    % Pandas
-    \node (pandas) [right=of numpy, xshift=1cm, draw=pandas, thick, fill=blue!5, minimum width=3cm, minimum height=2cm, align=center] {
-        \textbf{Pandas DataFrame}\\
-        Números + Texto + Fechas\\
-        Indices: "2024-01-01"...\\
-        Nombres de Columnas
+    % DataFrame
+    \node (df) [draw=pandas, fill=blue!5, rectangle, rounded corners, minimum width=5cm, minimum height=3cm, right=of series, align=center] {
+        \textbf{DataFrame (2D)}\\
+        \textit{"Una Tabla"}\\
+        \rule{4.5cm}{0.5pt}\\
+        Colección de Series\\
+        compartiendo un índice.\\
+        \textit{Columnas heterogéneas}\\
+        (Int, Float, String, Datetime)
     };
+
+    \draw[->, ultra thick, gray] (series) -- (df) node[midway, above] {\footnotesize Se agrupan en};
 \end{tikzpicture}
 \end{center}
 
-\newpage
+\section{Capítulo I: Ingesta de Datos (I/O)}
 
-\section{Capítulo I: El DataFrame}
+El mundo real no vive solo en CSV. En agroindustria, lidiarás con Excel antiguos y JSON de APIs modernas.
 
-El objeto principal de Pandas es el `DataFrame`. Piensa en él como una hoja de cálculo programable.
+\subsection{Lectura Robusta}
+El comando \texttt{read\_csv} tiene más de 50 parámetros. Aquí están los esenciales para evitar errores al cargar.
 
-\subsection{Creación y Carga de Datos}
-Rara vez creamos DataFrames a mano; usualmente los cargamos desde archivos.
-
-\begin{lstlisting}[language=Python, caption={Cargar un CSV de Cosecha}]
+\begin{lstlisting}[language=Python, caption={Carga Avanzada de Datos}]
 import pandas as pd
 
-# Leer archivo separado por comas
-# index_col=0 usa la primera columna como indice (ID)
-df = pd.read_csv('cosecha_2024.csv', index_col=0)
+# 1. Cargar CSV definiendo fechas y nulos personalizados
+df_sensor = pd.read_csv(
+    'sensores_raw.csv',
+    sep=';',                    # A veces usan punto y coma
+    parse_dates=['fecha_hora'], # Convertir autom. a datetime
+    na_values=['error', '-', 'null'], # Tratar estos textos como NaN
+    dtype={'id_sensor': str}    # Forzar ID como texto, no numero
+)
 
-# Ver las primeras 5 filas
-print(df.head())
-
-# Ver informacion tecnica (tipos de datos, memoria)
-print(df.info())
+# 2. Cargar Excel (requiere libreria 'openpyxl')
+df_suelos = pd.read_excel(
+    'analisis_suelos.xlsx',
+    sheet_name='Lote_Norte',
+    header=1  # Usar la segunda fila como titulos
+)
 \end{lstlisting}
 
-\subsection{Selección de Datos: loc vs iloc}
-Esta es la fuente de confusión \#1.
+\subsection{Inspección Inicial}
+Lo primero que haces al recibir un dataset:
+
+\begin{lstlisting}[language=Python]
+print(df.shape)   # (filas, columnas)
+print(df.dtypes)  # ¿Los numeros son float o object (texto)?
+print(df.head(3)) # Muestra visual rapida
+print(df['cultivo'].value_counts()) # Conteo de categorias unicas
+\end{lstlisting}
+
+\newpage
+
+\section{Capítulo II: Indexación y Selección Quirúrgica}
+
+Acceder a los datos incorrectamente es la fuente \#1 de \textit{bugs} silenciosos.
+
+\begin{table}[h]
+\centering
+\rowcolors{2}{gray!10}{white}
+\begin{tabular}{l p{6cm} p{6cm}}
+\toprule
+\textbf{Método} & \textbf{¿Qué usa?} & \textbf{Ejemplo} \\
+\midrule
+\texttt{.loc[]} & \textbf{Etiquetas} (Nombres) & \texttt{df.loc["2024-01-01", "Humedad"]} \\
+\texttt{.iloc[]} & \textbf{Posición} (Enteros) & \texttt{df.iloc[0, 3]} \\
+\texttt{df[ ]} & \textbf{Columnas} (Principalmente) & \texttt{df["Temperatura"]} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Filtrado Booleano (Máscaras)}
+No uses \texttt{if} dentro de un \texttt{for}. Usa máscaras vectorizadas.
+
+\begin{lstlisting}[language=Python, caption={Consultas Complejas}]
+# 1. Crear la mascara (devuelve Series de True/False)
+mask_calor = df['Temperatura'] > 30
+mask_seco  = df['Humedad'] < 40
+
+# 2. Aplicar filtro
+alerta_estres = df[mask_calor & mask_seco]
+
+# 3. Filtrar por lista de valores permitidos
+lotes_interes = ['Lote_A1', 'Lote_B5']
+df_foco = df[df['id_lote'].isin(lotes_interes)]
+\end{lstlisting}
+
+\section{Capítulo III: Limpieza Profunda (Data Cleaning)}
+
+\begin{warningbox}{Tipos de Datos Incorrectos}
+Si una columna de números tiene un solo texto (ej: "Sin dato"), Pandas convertirá \textbf{toda} la columna a \texttt{object} (texto). No podrás hacer sumas ni promedios.
+\end{warningbox}
+
+\subsection{Sanitización de Tipos}
+\begin{lstlisting}[language=Python]
+# Convertir a numerico, forzando errores a NaN
+# Si hay un texto "Error", se vuelve NaN en lugar de romper el codigo
+df['ph_suelo'] = pd.to_numeric(df['ph_suelo'], errors='coerce')
+
+# Eliminar duplicados (ej: sensor envio el dato 2 veces)
+df = df.drop_duplicates(subset=['fecha', 'id_sensor'])
+\end{lstlisting}
+
+\subsection{Tratamiento de Nulos (Imputación)}
 \begin{itemize}
-    \item \texttt{.loc[]}: Busca por Etiqueta (Nombre).
-    \item \texttt{.iloc[]}: Busca por Índice Numérico (Posición).
+    \item \texttt{fillna(0)}: Peligroso en agro (0 de lluvia es válido, 0 de pH es ácido mortal).
+    \item \texttt{ffill()}: Rellenar con el último valor conocido (ideal sensores).
+    \item \texttt{interpolate()}: Trazar una línea entre puntos.
 \end{itemize}
 
 \begin{lstlisting}[language=Python]
-# Seleccionar columna 'Humedad' de la fila 'Sensor_A'
-dato = df.loc['Sensor_A', 'Humedad']
-
-# Seleccionar fila 0, columna 2
-dato_raw = df.iloc[0, 2]
+# Interpolacion lineal limitada a huecos pequeños
+df['Humedad'] = df['Humedad'].interpolate(method='time', limit=2)
 \end{lstlisting}
 
 \newpage
 
-\section{Capítulo II: Limpieza de Datos (Data Cleaning)}
+\section{Capítulo IV: Ingeniería de Características}
 
-En el agro, los datos son ruidosos. Un sensor de humedad puede desconectarse y enviar valores vacíos o basura.
+La IA no aprende sola; a veces debemos darle "pistas" creando nuevas columnas.
 
-\begin{warningbox}{El Peligro del NaN}
-En computación científica, \textbf{NaN} significa \textit{Not a Number}. Si intentas sumar \texttt{5 + NaN}, el resultado es \texttt{NaN}. Un solo dato faltante puede arruinar todo el cálculo de promedio anual.
-\end{warningbox}
-
-\subsection{Detectar Datos Faltantes}
-Pandas nos permite ver dónde están los huecos.
-
+\subsection{Operaciones Vectorizadas}
 \begin{lstlisting}[language=Python]
-# Crear un reporte de datos faltantes por columna
-print(df.isna().sum())
-
-# Salida ejemplo:
-# Temperatura      0
-# Humedad         15  <-- 15 lecturas perdidas!
-# pH               2
+# Crear columna nueva basada en calculo matematico
+# Diferencia de temperatura (Dia - Noche)
+df['amplitud_termica'] = df['temp_max'] - df['temp_min']
 \end{lstlisting}
 
-\subsection{Estrategias de Corrección}
-Como ingenieros, debemos decidir qué hacer con esos huecos.
+\subsection{Lógica Personalizada (.apply)}
+Cuando la matemática simple no basta, aplicamos una función a cada fila. **Nota:** Es más lento que vectorizar, úsalo con cuidado.
 
-1. Eliminar (Drop): Si hay pocos datos malos, bórralos.
-2. Imputar (Fill): Rellenar con un promedio o el valor anterior.
+\begin{lstlisting}[language=Python]
+def clasificar_riesgo(fila):
+    if fila['Humedad'] > 90 and fila['Temperatura'] > 25:
+        return "ALTO (Hongos)"
+    elif fila['Viento'] > 50:
+        return "ALTO (Daño Fisico)"
+    else:
+        return "BAJO"
 
-\begin{lstlisting}[language=Python, caption={Sanitización de Sensores}]
-# ESTRATEGIA 1: Borrar filas con huecos
-df_limpio = df.dropna()
+# axis=1 significa "pasar la fila completa a la funcion"
+df['tipo_riesgo'] = df.apply(clasificar_riesgo, axis=1)
+\end{lstlisting}
 
-# ESTRATEGIA 2: Rellenar (Ideal para series de tiempo)
-# 'ffill' (Forward Fill) toma el ultimo valor valido y lo repite.
-# Si a las 10:00 hizo 25C y a las 11:00 es NaN, asume 25C.
-df_relleno = df.fillna(method='ffill')
+\section{Capítulo V: Series Temporales y Resampling}
 
-# ESTRATEGIA 3: Rellenar con promedio
-promedio = df['Humedad'].mean()
-df['Humedad'] = df['Humedad'].fillna(promedio)
+El agro se mueve por ciclos (diarios, mensuales, estacionales).
+
+\begin{conceptbox}{Resampling vs Rolling}
+\begin{itemize}
+    \item \textbf{Resample:} Cambiar la frecuencia (de Hora $\rightarrow$ Día). Como un "Zoom Out".
+    \item \textbf{Rolling:} Ventana deslizante. Suaviza el gráfico manteniendo la frecuencia.
+\end{itemize}
+\end{conceptbox}
+
+\begin{lstlisting}[language=Python, caption={Análisis Temporal}]
+# Asegurar que el indice es Datetime
+df = df.set_index('fecha')
+
+# 1. RESAMPLE: Promedio Mensual ('M')
+clima_mensual = df.resample('M').mean()
+
+# 2. ROLLING: Media movil de 7 dias (Suavizar picos)
+# Elimina el ruido de dias atipicos
+df['temp_suavizada'] = df['Temperatura'].rolling(window=7).mean()
+\end{lstlisting}
+
+\section{Capítulo VI: Fusión de Datos (Merge)}
+
+Rara vez tienes toda la info en una tabla.
+\begin{itemize}
+    \item Tabla A: Cosecha (kilos, fecha, \texttt{id\_lote})
+    \item Tabla B: Suelo (\texttt{id\_lote}, \texttt{tipo\_tierra}, ph)
+\end{itemize}
+
+\begin{lstlisting}[language=Python]
+# Unir tablas usando 'id_lote' como llave
+# how='left' mantiene todas las cosechas, y pega info de suelo si existe
+df_completo = pd.merge(
+    df_cosecha,
+    df_suelo,
+    on='id_lote',
+    how='left'
+)
 \end{lstlisting}
 
 \newpage
 
-\section{Capítulo III: Filtrado y Estadística}
+\section{Capítulo VII: Ética y Documentación}
 
-Podemos hacer preguntas complejas a los datos sin usar bucles.
+La limpieza de datos es un proceso subjetivo que altera la realidad observada.
 
-\begin{agrobox}{Caso de Uso: Alerta de Hongos}
-Los hongos proliferan con humedad alta ($>80\%$) y temperaturas moderadas ($>20^\circ$C). Filtremos esos días.
-\end{agrobox}
-
-\begin{lstlisting}[language=Python, caption={Filtrado Multicriterio}]
-# Filtro booleano (Igual que NumPy, pero con nombres)
-riesgo_hongos = df[ (df['Humedad'] > 80) & (df['Temperatura'] > 20) ]
-
-print("Dias con riesgo de hongos:")
-print(riesgo_hongos)
-\end{lstlisting}
-
-\subsection{Agrupación (GroupBy)}
-El poder de las tablas dinámicas de Excel, pero en código.
-
-\begin{lstlisting}[language=Python]
-# Supongamos que tenemos columna 'Zona' (Norte, Sur, Este)
-# Queremos el promedio de rendimiento por zona.
-
-resumen = df.groupby('Zona')['Rendimiento'].mean()
-print(resumen)
-\end{lstlisting}
-
-\section*{Reto Semanal: El Dataset Sucio}
-
-Se te entregará un archivo \texttt{clima\_corrupto.csv}.
+\begin{ethicsbox}{Checklist de Integridad de Datos}
 \begin{enumerate}
-    \item Cárgalo en un DataFrame.
-    \item Encuentra cuántas filas tienen \texttt{NaN}.
-    \item Rellena las temperaturas faltantes usando interpolación lineal (`.interpolate()`).
-    \item Calcula la temperatura promedio mensual.
-    \item Exporta el resultado a \texttt{clima\_limpio.csv}.
+    \item \textbf{Trazabilidad:} ¿Guardo el dataset \texttt{raw} original sin tocar?
+    \item \textbf{Transparencia:} ¿Documento cuántas filas eliminé y por qué?
+    \item \textbf{Sesgo de Imputación:} Al rellenar nulos con el promedio, ¿estoy ocultando un fallo sistemático de un sensor en una zona pobre?
+\end{enumerate}
+\end{ethicsbox}
+
+\section*{Reto Profesional: Auditoría Climática}
+
+Se te entrega \texttt{estacion\_falla.csv} (10,000 filas). Contiene datos horarios de 2023.
+
+\textbf{Problemas conocidos:}
+\begin{enumerate}
+    \item El sensor de lluvia se "traba" y repite el valor exacto por horas.
+    \item Hay temperaturas de $200^\circ$C (error de voltaje).
+    \item Faltan días completos en Octubre.
 \end{enumerate}
 
+\textbf{Tu Misión:}
 \begin{lstlisting}[language=Python]
-# Pista para exportar
-df.to_csv('clima_limpio.csv')
+# 1. Cargar parseando fechas
+df = pd.read_csv('estacion_falla.csv', parse_dates=['timestamp'], index_col='timestamp')
+
+# 2. Filtrar Outliers (Temp > 50 es imposible)
+df.loc[df['temp'] > 50, 'temp'] = pd.NA
+
+# 3. Detectar "valores congelados" (Diff = 0 por mucho tiempo)
+# shift(1) mueve la columna un paso abajo para comparar con la anterior
+df['cambio_lluvia'] = df['lluvia'] - df['lluvia'].shift(1)
+
+# 4. Resamplear a diario sumando lluvia y promediando temp
+df_diario = df.resample('D').agg({
+    'lluvia': 'sum',
+    'temp': 'mean',
+    'humedad': 'max'
+})
+
+# 5. Visualizar comparando Raw vs Limpio
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12,6))
+df['temp'].plot(alpha=0.3, label='Raw (Horario)', color='gray')
+df_diario['temp'].plot(linewidth=2, label='Limpio (Diario)', color='blue')
+plt.legend()
+plt.title("Auditoria de Temperatura 2023")
+plt.savefig("reporte_calidad.pdf")
 \end{lstlisting}
+
+\newpage
+
+\section{Capítulo VIII: Taller de Ejercicios Prácticos}
+
+La única forma de aprender Pandas es escribiendo código. En este capítulo, resolveremos problemas reales de la agroindustria.
+
+\subsection{Nivel 1: Laboratorio Guiado (Producción Lechera)}
+En este ejercicio, crearemos un pequeño dataset manualmente para entender el flujo completo sin depender de archivos externos.
+
+\begin{agrobox}{Objetivo}
+Analizar la calidad de leche de 3 vacas durante una semana y detectar anomalías en el pH (Rango normal: 6.6 - 6.8).
+\end{agrobox}
+
+\begin{lstlisting}[language=Python, caption={Simulación y Análisis}]
+import pandas as pd
+import numpy as np
+
+# 1. CREAR DATOS SIMULADOS
+data = {
+    'id_vaca': ['V01', 'V02', 'V01', 'V03', 'V02', 'V03'],
+    'fecha': ['2024-01-01', '2024-01-01', '2024-01-02',
+              '2024-01-01', '2024-01-02', '2024-01-02'],
+    'litros': [20.5, 18.2, 21.0, 19.5, 18.0, 15.0],
+    'ph': [6.7, 6.6, 6.2, 6.8, 6.9, 7.1] # Notar valores acidos/alcalinos
+}
+
+df_leche = pd.DataFrame(data)
+
+# 2. LIMPIEZA: FILTRAR LECHE ACIDA (pH < 6.5)
+# Esto se descarta para consumo humano
+leche_mala = df_leche[df_leche['ph'] < 6.5]
+print("--- ALERTA DE ACIDEZ ---")
+print(leche_mala)
+
+# 3. ANALISIS: TOTAL DE LITROS POR VACA (SOLO LECHE BUENA)
+df_buena = df_leche[df_leche['ph'] >= 6.5]
+reporte = df_buena.groupby('id_vaca')['litros'].sum()
+
+print("\n--- REPORTE DE PAGO ---")
+print(reporte)
+\end{lstlisting}
+
+\subsection{Nivel 2: Ejercicios de Calistenia}
+Resuelve estos problemas cortos. Asume que tienes un DataFrame llamado \texttt{df\_clima}.
+
+\begin{itemize}
+    \item \textbf{Ejercicio A (Selección):} Crea un nuevo DataFrame llamado \texttt{df\_lluvia} que solo contenga las columnas \texttt{"fecha"} y \texttt{"precipitacion"}.
+    \item \textbf{Ejercicio B (Filtro Simple):} Filtra los días donde la \texttt{"temperatura"} fue mayor a 35 grados.
+    \item \textbf{Ejercicio C (Corrección de Texto):} La columna \texttt{"zona"} tiene valores " Norte" (con espacio extra). Usa \texttt{df['zona'].str.strip()} para arreglarlo.
+    \item \textbf{Ejercicio D (Creación de Columnas):} Convierte la temperatura de Celsius a Fahrenheit en una nueva columna: $F = C \times 1.8 + 32$.
+\end{itemize}
+
+\subsection{Nivel 3: El Desafío de Integración}
+
+\begin{warningbox}{Escenario Real}
+Tienes dos fuentes de datos no sincronizadas:
+\begin{enumerate}
+    \item \texttt{ventas.csv}: Registro de sacos de café vendidos (con fechas).
+    \item \texttt{precio\_internacional.csv}: Precio del café en bolsa (diario).
+\end{enumerate}
+\textbf{Problema:} El archivo de ventas no tiene el precio. Debes cruzar los datos para saber cuánto dinero real ingresó.
+\end{warningbox}
+
+\textbf{Pasos para la solución:}
+
+\begin{lstlisting}[language=Python]
+# PISTA PARA LA SOLUCION
+
+# 1. Cargar ambos DataFrames
+ventas = pd.read_csv('ventas.csv')
+precios = pd.read_csv('precio_internacional.csv')
+
+# 2. Asegurar que las fechas sean tipo 'datetime' en AMBOS
+ventas['fecha'] = pd.to_datetime(ventas['fecha'])
+precios['fecha'] = pd.to_datetime(precios['fecha'])
+
+# 3. Realizar el MERGE (Cruce)
+# Usamos 'left' para no perder ventas si falta algun precio
+df_final = pd.merge(ventas, precios, on='fecha', how='left')
+
+# 4. Calcular ingreso total
+# Si faltan precios (NaN), rellenar con el promedio antes de calcular
+precio_promedio = precios['valor'].mean()
+df_final['valor'] = df_final['valor'].fillna(precio_promedio)
+
+df_final['ingreso_total'] = df_final['kilos_vendidos'] * df_final['valor']
+\end{lstlisting}
+
+\begin{conceptbox}{¿Por qué fallan los Merges?}
+El error más común es que la columna clave (\texttt{fecha}) tenga formatos distintos.
+\begin{itemize}
+    \item Tabla A: "2024-01-01" (String)
+    \item Tabla B: 2024-01-01 (Timestamp)
+\end{itemize}
+\textbf{Regla de Oro:} Siempre normaliza tipos con \texttt{.info()} antes de unir tablas.
+\end{conceptbox}
 
 \end{document}

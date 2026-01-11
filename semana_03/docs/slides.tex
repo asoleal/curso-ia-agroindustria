@@ -1,0 +1,281 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+% --- TEMA ---
+% CORRECCIÓN: Cargamos el tema limpio, sin parámetros inventados.
+% (Dará una advertencia en el log sobre Fira Sans, pero compilará bien
+% porque sobrescribimos la fuente justo abajo).
+\usetheme{metropolis}
+
+% --- FUENTES (DejaVu Sans - Instalada en tu sistema) ---
+\usepackage{fontspec}
+\setsansfont{DejaVu Sans}[
+    BoldFont={DejaVu Sans Bold},
+    ItalicFont={DejaVu Sans Oblique},
+    Scale=0.9
+]
+\setmonofont{DejaVu Sans Mono}[Scale=0.8]
+
+% --- IDIOMA ---
+\usepackage{polyglossia}
+\setmainlanguage{spanish}
+
+% --- PAQUETES ---
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\usetikzlibrary{positioning, shapes, arrows, shadows}
+
+% --- COLORES DE TU MARCA ---
+\definecolor{primary}{RGB}{0, 85, 164}      % Azul Ingeniería
+\definecolor{accent}{RGB}{34, 139, 34}      % Verde Agro
+\definecolor{danger}{RGB}{204, 0, 0}        % Rojo Alerta
+\definecolor{pandas}{RGB}{19, 7, 84}        % Azul oscuro (Pandas)
+\definecolor{codebg}{RGB}{240, 240, 240}
+
+% Configuración de colores de Metropolis
+\setbeamercolor{frametitle}{bg=primary, fg=white}
+\setbeamercolor{progress bar}{fg=accent, bg=gray!20}
+\setbeamercolor{alerted text}{fg=danger}
+\setbeamercolor{block title}{bg=primary, fg=white}
+
+% --- ESTILO DE CÓDIGO ---
+\lstdefinestyle{slidecode}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{gray},
+    keywordstyle=\color{pandas}\bfseries,
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{accent},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    frame=none,
+    numbers=none,
+    showstringspaces=false,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+}
+\lstset{style=slidecode}
+
+% --- INFORMACIÓN ---
+\title{Domando Datos Reales con Pandas}
+\subtitle{Limpieza, Análisis y Ética en el Agro}
+\date{\today}
+\author{Ingeniería de Software I}
+\institute{Curso de IA Aplicada}
+
+\begin{document}
+
+% -------------------------------------------------------------------
+% SLIDE 1: PORTADA
+% -------------------------------------------------------------------
+\maketitle
+
+% -------------------------------------------------------------------
+% SLIDE 2: MOTIVACIÓN
+% -------------------------------------------------------------------
+\begin{frame}{¿Por qué NumPy no es suficiente?}
+    En la vida real, los datos son \textbf{sucios} y \textbf{heterogéneos}.
+
+    \vspace{0.5cm}
+
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{El problema de NumPy:}
+        \begin{itemize}
+            \item Solo maneja números.
+            \item No sabe qué es una fecha.
+            \item Si falta un dato, todo falla.
+            \item Acceso por índice opaco: \texttt{data[0, 4]}
+        \end{itemize}
+
+        \column{0.5\textwidth}
+        \textbf{La solución Pandas:}
+        \begin{itemize}
+            \item Etiquetas: \texttt{data['Humedad']}.
+            \item Series Temporales nativas.
+            \item Manejo robusto de \texttt{NaN}.
+            \item \textbf{SQL para Python.}
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 3: ESTRUCTURA VISUAL (TIKZ)
+% -------------------------------------------------------------------
+\begin{frame}{Anatomía: Series vs DataFrame}
+    \centering
+    \begin{tikzpicture}[node distance=1cm]
+        % Series
+        \node (series) [draw=accent, fill=green!10, rectangle, rounded corners, minimum width=2.5cm, minimum height=3cm, align=center, drop shadow] {
+            \textbf{Series (1D)}\\
+            \scriptsize Columna\\
+            \rule{2cm}{0.5pt}\\
+            \scriptsize 10.5\\
+            \scriptsize 11.2\\
+            \scriptsize NaN\\
+            \scriptsize \textit{Homogéneo}
+        };
+
+        % Arrow
+        \draw[->, ultra thick, gray] (series) -- ++(3,0) node[midway, above] {\footnotesize Se agrupan en};
+
+        % DataFrame
+        \node (df) [right=of series, xshift=2cm, draw=primary, fill=blue!10, rectangle, rounded corners, minimum width=4cm, minimum height=3cm, align=center, drop shadow] {
+            \textbf{DataFrame (2D)}\\
+            \scriptsize Tabla (Excel Potente)\\
+            \rule{3.5cm}{0.5pt}\\
+            \scriptsize Índice + Columnas Variadas\\
+            \scriptsize (Float, String, Date)
+        };
+    \end{tikzpicture}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 4: CARGA DE DATOS (CODIGO)
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Ingesta de Datos (I/O)}
+    No confíes en los valores por defecto. Define tus tipos.
+
+    \begin{lstlisting}
+import pandas as pd
+
+# Carga robusta para Agro
+df = pd.read_csv(
+    'cosecha_2024.csv',
+    sep=';',                     # Delimitador comun en Latam
+    parse_dates=['fecha'],       # Interpretar tiempo
+    na_values=['-', 'error'],    # Convertir basura a NaN
+    index_col='fecha'            # Usar fecha como eje X
+)
+
+# Inspeccion rapida
+print(df.info())
+    \end{lstlisting}
+
+    \begin{alertblock}{Tip Pro}
+        Si una columna numérica tiene un solo texto, Pandas la volverá texto (\texttt{object}). Usa \texttt{.info()} siempre.
+    \end{alertblock}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 5: SELECCIÓN
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Navegación: .loc vs .iloc}
+    La confusión \#1 en entrevistas de trabajo.
+
+    \vspace{0.5cm}
+    \centering
+    \begin{tabular}{llp{5cm}}
+        \toprule
+        \textbf{Comando} & \textbf{Busca por...} & \textbf{Ejemplo} \\
+        \midrule
+        \texttt{.loc[]} & \textbf{Etiqueta} (Nombre) & \texttt{df.loc['2024-01', 'pH']} \\
+        \texttt{.iloc[]} & \textbf{Posición} (Índice) & \texttt{df.iloc[0, 4]} \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{0.5cm}
+    \begin{lstlisting}
+# Filtrado Booleano (Mascara)
+# "Dias calurosos con humedad alta"
+alerta = df[ (df['temp'] > 30) & (df['hum'] > 80) ]
+    \end{lstlisting}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 6: LIMPIEZA
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Limpieza y Valores Nulos}
+    En el campo, los sensores fallan. ¿Qué hacemos con los huecos?
+
+    \begin{itemize}
+        \item \textbf{Borrar:} \texttt{dropna()} $\rightarrow$ Perdemos datos valiosos.
+        \item \textbf{Promedio:} \texttt{fillna(mean)} $\rightarrow$ Aplana la curva.
+        \item \textbf{Interpolación:} La opción correcta para series temporales.
+    \end{itemize}
+
+    \begin{lstlisting}
+# Relleno inteligente (conecta los puntos)
+df['humedad'] = df['humedad'].interpolate(method='time')
+
+# Sanear errores fisicos
+# Humedad > 100% es imposible -> convertir a NaN
+df.loc[df['humedad'] > 100, 'humedad'] = pd.NA
+    \end{lstlisting}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 7: AGREGACIÓN
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Análisis: GroupBy y Resample}
+    \textbf{GroupBy:} Para categorías (Lotes, Variedades).
+    \textbf{Resample:} Para tiempo (Días, Meses).
+
+    \begin{lstlisting}
+# ¿Cual lote produce mas?
+rendimiento = df.groupby('id_lote')['kilos'].sum()
+
+# Promedio mensual de clima
+clima_mes = df.resample('M').agg({
+    'temp': 'mean',
+    'lluvia': 'sum'
+})
+    \end{lstlisting}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 8: ÉTICA
+% -------------------------------------------------------------------
+\begin{frame}{Ética del Dato}
+    Limpiar datos es \textbf{alterar la realidad}.
+
+    \begin{block}{Preguntas Obligatorias}
+        \begin{enumerate}
+            \item \textbf{Trazabilidad:} ¿Guardo el original \texttt{raw}?
+            \item \textbf{Sesgo:} Al rellenar con promedios, ¿oculto fallas sistémicas en zonas vulnerables?
+            \item \textbf{Transparencia:} ¿Está documentado mi proceso de limpieza?
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 9: EJERCICIO EN VIVO
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Ejercicio Rápido: Calidad de Leche}
+    Detectar vacas con problemas de salud (pH fuera de 6.6 - 6.8).
+
+    \begin{lstlisting}
+data = {
+    'vaca': ['V1', 'V2', 'V3'],
+    'ph':   [6.7,  6.2,  7.1],  # V2 acida, V3 alcalina
+    'lts':  [20,   18,   15]
+}
+df = pd.DataFrame(data)
+
+# 1. Filtrar anomalías
+enfermas = df[ (df['ph'] < 6.6) | (df['ph'] > 6.8) ]
+
+# 2. Calcular perdida economica (precio = 2000)
+perdida = enfermas['lts'].sum() * 2000
+print(f"Perdida hoy: ${perdida}")
+    \end{lstlisting}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 10: CIERRE
+% -------------------------------------------------------------------
+\begin{frame}{Próximos Pasos}
+    \centering
+    \Large
+    ¿Listos para el reto semanal?
+
+    \vspace{1cm}
+    \normalsize
+    Descarguen \texttt{clima\_corrupto.csv} del repositorio.
+
+    \vspace{0.5cm}
+    \textbf{¡A programar!}
+\end{frame}
+
+\end{document}
