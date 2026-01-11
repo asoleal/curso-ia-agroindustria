@@ -1,72 +1,105 @@
 # Semana 02: Fundamentos de Computación Científica para el Agro 🌱
 
-> **Curso:** Inteligencia Artificial Aplicada al Agro
-> **Enfoque:** Ingeniería de Software, Lógica Algorítmica y Vectorización (NumPy)
+> **Rol:** Ingeniero de Datos / AI Specialist.
+> **Objetivo:** Transición de scripts básicos a sistemas escalables de alto rendimiento.
+> **Tech Stack:** Python, NumPy, Vectorización (SIMD).
 
 ---
 
-## 📋 Visión General
+## 📋 Visión General: ¿Por qué estamos aquí?
 
-En esta semana dejamos atrás la programación básica de scripts para adentrarnos en la **Ingeniería de Datos**. El objetivo no es solo que el código funcione, sino que sea **eficiente** y capaz de escalar a millones de datos (Big Data).
+En la Semana 01 aprendiste a escribir código. En la Semana 02 aprenderás a escribir **código que escala**.
 
-### Objetivos de Aprendizaje
-1.  **Lógica Defensiva:** Validar datos de sensores antes de procesarlos.
-2.  **Complejidad Computacional:** Entender por qué los bucles `for` son el enemigo en Python.
-3.  **Vectorización:** Usar **NumPy** para procesar matrices de cultivos y datos satelitales.
+En el mundo real (AgTech), no procesamos 10 datos; procesamos imágenes satelitales con **millones de pixeles** o series temporales de sensores IoT con **miles de lecturas por segundo**. Si usas bucles `for` tradicionales, tu servidor colapsará.
+
+### 🎯 Tus 3 Objetivos de Ingeniería
+1.  **Programación Defensiva (🛡️):** Aprender el arte de "Fail Fast". Si un sensor envía basura, el sistema debe protegerse, no explotar.
+2.  **Vectorización (⚡):** Entender cómo **NumPy** usa bloques contiguos de memoria (como C/Fortran) para ser 100x más rápido que Python puro.
+3.  **Lógica Espacial (📡):** Manipular matrices para simular terrenos y tomar decisiones agronómicas sin iterar manualmente.
 
 ---
 
-## 📂 Estructura del Proyecto
+## 🧠 Modelos Mentales (Teoría Esencial)
+
+Antes de abrir el editor, necesitas visualizar cómo funciona la memoria de tu computadora.
+
+### 1. El Costo de la Memoria (Listas vs Arrays)
+* **Python List:** Son punteros dispersos. Para leerlos, la CPU tiene que "saltar" por toda la RAM. (Lento).
+* **NumPy Array:** Es un bloque sólido y contiguo. La CPU lo carga de un solo golpe. (Rápido).
+
+
+
+### 2. Complejidad Algorítmica (Big O)
+* **$O(N)$ (Lineal):** Si duplicas los datos, duplicas el tiempo. (Aceptable).
+* **Vectorizado (SIMD):** Procesamiento paralelo a nivel de CPU. (Ideal para IA).
+
+
+
+---
+
+## 📂 Estructura del Módulo
 
 ```text
 semana_02/
-├── 01_Fundamentos_Logica/
-│   └── main.py              # Validación de sensores (Lógica Booleana)
-├── 02_Numpy_Vectorizacion/
-│   └── simulacion.py        # Benchmark: Listas vs. NumPy (Prueba de velocidad)
-├── docs/
-│   ├── manual02.pdf         # Teoría: Matemáticas y Gestión de Memoria
-│   └── slides_clase.pdf     # Presentación ejecutiva
-└── taller_numpy.py          # RETO FINAL: Análisis satelital de terreno
+├── 01_Fundamentos_Logica/   # [MÓDULO 1] Calidad de Software
+│   └── main.py              # Laboratorio: Validaciones y Guard Clauses
+├── 02_Numpy_Vectorizacion/  # [MÓDULO 2] High Performance Computing (HPC)
+│   └── simulacion.py        # Benchmark: La carrera contra el bucle 'for'
+├── docs/                    # [RECURSOS]
+│   ├── manual02.pdf         # Profundización teórica
+│   └── slides_clase.pdf     # Resumen ejecutivo
+└── taller_numpy.py          # [RETO FINAL] Análisis Satelital Integrado
 ```
-# 🛠️ Instrucciones
+## 🛠️ Tu Hoja de Ruta (Paso a Paso)
 
-Sigue este orden lógico para completar las actividades de la semana:
+Sigue este orden estrictamente. Cada paso construye sobre el anterior.
 
-### 1. Carpeta `docs/` (Teoría)
-Antes de tocar el código, necesitamos base teórica.
-**Actividad**: Lee el archivo `manual02.pdf`.
-**Objetivo**: Entender la diferencia en memoria RAM entre una **Lista** (punteros dispersos) y un **Array** (bloque contiguo), y qué significa la notación **"Big O"** ($O(N)$ vs $O(1)$).
+### 🟢 Paso 1: Blindar el Código (Lógica)
+Entra en la mente de un sensor defectuoso. Aprende a usar **Guard Clauses** para limpiar tu código de `if/else` anidados.
 
-### 2. Carpeta `01_Fundamentos_Logica/` (Calidad de Código)
-Aquí aprenderás a escribir código robusto que no se rompe con datos malos.
-**Comando**:
+* **Archivo:** `01_Fundamentos_Logica/main.py`
+* **Misión:** Ejecuta el script, observa los fallos y completa el **Reto de Incendio** (ver instrucciones dentro del archivo).
 ```bash
 python 01_Fundamentos_Logica/main.py
 ```
 
-### 3. Carpeta `02_Numpy_Vectorizacion/` (Rendimiento)
-La demostración de por qué NumPy es el rey en IA.
-* **Comando:** `python 02_Numpy_Vectorizacion/simulacion.py`
-* **Actividad:**
-    1. Ejecuta el benchmark.
-    2. Compara los tiempos en consola.
-    3. **Reflexión:** Verifica que NumPy sea al menos 50 veces más rápido que el método tradicional. Esto te enseñará a nunca usar bucles `for` para cálculos matemáticos masivos.
+### 🟡 Paso 2: La Velocidad de la Luz (Vectorización)
+Demostración empírica. Vamos a procesar 1 millón de plantas y verás por qué los bucles `for` están prohibidos en Big Data.
 
-### 4. Archivo Raíz `taller_numpy.py` (Reto Final)
-Aplicación de todo lo aprendido en un escenario satelital simulado.
-* **Comando:** `python taller_numpy.py`
-* **Actividad:**
-    1. Ejecuta la simulación del terreno de 10,000 $m^2$.
-    2. Analiza el reporte de daños generado.
-    3. Revisa el código para entender cómo se usaron **Máscaras Booleanas** (ej. `terreno < 0.2`) para filtrar datos sin usar condicionales `if`.
 
----
 
-## ✅ Entregable Final
-Una vez completados los pasos anteriores, sube tu trabajo al repositorio para registrar tu avance:
+* **Archivo:** `02_Numpy_Vectorizacion/simulacion.py`
+* **Misión:** Corre el benchmark, implementa el **Reto Trigonométrico** y registra el "Speedup" (veces más rápido) que lograste.
+```bash
+python 02_Numpy_Vectorizacion/simulacion.py
+```
+
+### 🔴 Paso 3: El Boss Final (Taller Satelital)
+Integra todo. Eres el ingeniero a cargo de un lote de **10,000 m²**. Tienes un mapa de humedad, zonas inundadas y zonas secas.
+
+
+
+* **Archivo:** `taller_numpy.py`
+* **Misión:**
+    1.  Generar el mapa del terreno.
+    2.  Usar **máscaras booleanas** (ej. `terreno < 0.2`) para detectar sequía sin `if`.
+    3.  Calcular el presupuesto hídrico usando `np.where`.
+    4.  Interpretar el reporte visual en ASCII.
+
+```bash
+python taller_numpy.py
+```
+
+## ✅ Definición de Hecho (DoD)
+Para considerar esta semana completada, debes tener:
+
+1.  [ ] `main.py` modificado con la alerta de incendio.
+2.  [ ] `simulacion.py` con el cálculo de `sin()` y el reporte de tiempos al final.
+3.  [ ] `taller_numpy.py` ejecutado y comprendido.
+
+**Entrega tu progreso:**
 
 ```bash
 git add .
-git commit -m "Semana 02: Completado laboratorio de lógica y vectorización"
+git commit -m "Semana 02: Completados laboratorios de HPC y Lógica Defensiva"
 git push origin main
