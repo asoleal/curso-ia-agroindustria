@@ -1,0 +1,99 @@
+.
+├── estructura.tree
+├── README.md
+├── reference
+│   ├── semana_01
+│   │   └── deploy_final.sh
+│   ├── semana_02
+│   │   ├── nivel_1
+│   │   │   └── main_resuelto.py
+│   │   └── nivel_2
+│   │       └── simulacion_resuelto.py
+│   └── semana_03
+│       ├── nivel_1
+│       │   ├── solucion_analisis.py
+│       │   └── solucion_main.py
+│       └── nivel_2
+│           ├── solucion_analisis.py
+│           └── solucion_generador.py
+├── requirements.txt
+├── semana_01
+│   ├── datos
+│   │   └── produccion_lote.csv
+│   ├── deploy.sh
+│   ├── docs
+│   │   ├── build
+│   │   │   ├── manual01.aux
+│   │   │   ├── manual01.fdb_latexmk
+│   │   │   ├── manual01.fls
+│   │   │   ├── manual01.log
+│   │   │   ├── manual01.pdf
+│   │   │   ├── slides.aux
+│   │   │   ├── slides.fdb_latexmk
+│   │   │   ├── slides.fls
+│   │   │   ├── slides.log
+│   │   │   ├── slides.nav
+│   │   │   ├── slides.snm
+│   │   │   └── slides.vrb
+│   │   ├── logo_unal.png
+│   │   ├── manual01.aux
+│   │   ├── manual01.fdb_latexmk
+│   │   ├── manual01.fls
+│   │   ├── manual01.log
+│   │   ├── manual01.out
+│   │   ├── manual01.pdf
+│   │   ├── manual01.tex
+│   │   ├── manual01.toc
+│   │   ├── manual01.xdv
+│   │   ├── slides.aux
+│   │   ├── slides.fdb_latexmk
+│   │   ├── slides.fls
+│   │   ├── slides.log
+│   │   ├── slides.nav
+│   │   ├── slides.out
+│   │   ├── slides.pdf
+│   │   ├── slides.snm
+│   │   ├── slides_taller.aux
+│   │   ├── slides_taller.log
+│   │   ├── slides_taller.nav
+│   │   ├── slides_taller.out
+│   │   ├── slides_taller.pdf
+│   │   ├── slides_taller.snm
+│   │   ├── slides_taller.tex
+│   │   ├── slides_taller.toc
+│   │   ├── slides_taller.vrb
+│   │   ├── slides.tex
+│   │   ├── slides.toc
+│   │   ├── slides.vrb
+│   │   └── slides.xdv
+│   ├── README.md
+│   ├── TALLER_TERMINAL.md
+│   └── test_entorno.py
+├── semana_02
+│   ├── 01_Fundamentos_Logica
+│   │   ├── main.py
+│   │   └── README.md
+│   ├── 02_Numpy_Vectorizacion
+│   │   ├── README.md
+│   │   └── simulacion.py
+│   ├── docs
+│   │   ├── manual_semana_02.aux
+│   │   ├── manual_semana_02.log
+│   │   ├── manual_semana_02.out
+│   │   ├── manual_semana_02.pdf
+│   │   ├── manual_semana_02.tex
+│   │   ├── manual_semana_02.toc
+│   │   ├── manual_tecnico.tex
+│   │   └── slides_clase.tex
+│   ├── README.md
+│   └── taller_numpy.py
+└── semana_03
+    ├── 01_Limpieza_y_Preparacion
+    │   └── main.py
+    ├── 02_Analisis_Visual
+    │   └── analisis.py
+    ├── datos
+    │   └── cosecha_sucia.csv
+    └── README.md
+
+21 directories, 76 files

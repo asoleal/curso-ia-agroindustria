@@ -1,0 +1,31 @@
+name: Compilar Documentos LaTeX
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Compilar LaTeX
+        uses: xu-cheng/texlive-action@v2
+        with:
+          scheme: full
+          run: |
+            # Semana 01
+            latexmk -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/manual01.tex
+            latexmk -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/slides.tex
+
+      - name: Subir PDFs resultantes
+        uses: actions/upload-artifact@v4
+        with:
+          name: Documentos-Semana01
+          path: |
+            semana_01/docs/manual01.pdf
+            semana_01/docs/slides.pdf

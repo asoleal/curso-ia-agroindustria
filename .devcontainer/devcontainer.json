@@ -8,7 +8,7 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-toolsai.jupyter",
-        "ms-python.black-formatter", 
+        "ms-python.black-formatter",
         "ms-python.pylint",
         "james-yu.latex-workshop",
         "MS-CEINTL.vscode-language-pack-es",
@@ -31,7 +31,7 @@
     }
   },
 
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y texlive-latex-extra texlive-lang-spanish texlive-science latexmk graphviz build-essential && pip install --upgrade pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y texlive-xetex texlive-latex-extra texlive-lang-spanish texlive-science latexmk graphviz build-essential && pip install --upgrade pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi",
 
   "features": {
     "ghcr.io/devcontainers/features/git:1": {}

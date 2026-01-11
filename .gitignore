@@ -1,10 +1,18 @@
+# LaTeX temporal files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.snm
+*.toc
+*.xdv
+*.vrb
+*.out
+*.synctex.gz
+_minted*
+build/
+
+# Python
 __pycache__/
 *.pyc
-.env
-.DS_Store
-zona_*/
-reportes/
-entrega_final/
-*.pdf
-*.log
-*.aux

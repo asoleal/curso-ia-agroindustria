@@ -1,5 +1,12 @@
 \documentclass{beamer}
 
+% --- Paquetes y Configuración ---
+\usepackage{fontspec}
+\usepackage[spanish]{babel}
+\setmainfont{DejaVu Sans} % o cualquier fuente sans-serif legible
+\usepackage{listings}
+\usepackage{xcolor}
+
 % --- Configuración del Tema y Colores ---
 \usetheme{Madrid}
 \usecolortheme{beaver} % Base rojiza/gris, la ajustaremos
@@ -10,12 +17,6 @@
 \setbeamercolor{structure}{fg=DarkGreen}
 \setbeamercolor{frametitle}{bg=TechGrey, fg=white}
 \setbeamercolor{title}{bg=DarkGreen, fg=white}
-
-% --- Paquetes y Configuración ---
-\usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
-\usepackage{listings}
-\usepackage{xcolor}
 
 % Configuración de bloques de código para Beamer
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -42,6 +43,8 @@
 \institute{Facultad de Ingeniería}
 \date{\today}
 
+\titlegraphic{\includegraphics[width=2.5cm]{logo_unal.png}}
+\logo{\includegraphics[height=0.8cm]{logo_unal.png}}
 \begin{document}
 
 % 1. Portada
