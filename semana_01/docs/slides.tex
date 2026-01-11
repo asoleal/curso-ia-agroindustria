@@ -1,0 +1,229 @@
+\documentclass{beamer}
+
+% --- Configuración del Tema y Colores ---
+\usetheme{Madrid}
+\usecolortheme{beaver} % Base rojiza/gris, la ajustaremos
+\definecolor{DarkGreen}{rgb}{0.0, 0.4, 0.0}
+\definecolor{TechGrey}{rgb}{0.3, 0.3, 0.3}
+
+% Personalización de colores para "Agro-IA"
+\setbeamercolor{structure}{fg=DarkGreen}
+\setbeamercolor{frametitle}{bg=TechGrey, fg=white}
+\setbeamercolor{title}{bg=DarkGreen, fg=white}
+
+% --- Paquetes y Configuración ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuración de bloques de código para Beamer
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    showstringspaces=false,
+    tabsize=2,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+}
+\lstset{style=mystyle}
+
+% --- Información de la Presentación ---
+\title[Ingeniería de Software I]{Fundamentos de Terminal, Linux y Automatización}
+\subtitle{Semana 01: Del GUI a la CLI en la Era de la IA}
+\author{Curso de IA Agroindustrial}
+\institute{Facultad de Ingeniería}
+\date{\today}
+
+\begin{document}
+
+% 1. Portada
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% 2. Índice
+\begin{frame}{Agenda del Día}
+    \tableofcontents
+\end{frame}
+
+% --- Sección 1: Introducción ---
+\section{Introducción: La Filosofía CLI}
+
+\begin{frame}{¿Por qué la Terminal en 2024?}
+    \begin{block}{La Realidad de la IA}
+    La Inteligencia Artificial no vive en Windows ni en macOS con interfaz gráfica. Vive en:
+    \end{block}
+
+    \begin{itemize}
+        \item \textbf{Servidores Cloud:} AWS, Google Cloud, Azure (Linux sin monitor).
+        \item \textbf{IoT y Edge Computing:} Raspberry Pi, sensores en campo, drones.
+        \item \textbf{Contenedores:} Docker y Kubernetes.
+    \end{itemize}
+
+    \vspace{0.5cm}
+    \centering
+    \textbf{\textit{"Si puedes hacerlo en la terminal, puedes automatizarlo."}}
+\end{frame}
+
+\begin{frame}{Principio Fundamental}
+    \begin{alertblock}{Todo es un archivo}
+    En Linux/Unix, todo se representa como un archivo o un directorio.
+    \end{alertblock}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item ¿El disco duro? Es un archivo (\texttt{/dev/sda}).
+        \item ¿La temperatura del CPU? Es un archivo.
+        \item ¿La memoria RAM? Es un archivo.
+    \end{itemize}
+\end{frame}
+
+% --- Sección 2: Navegación ---
+\section{Módulo 1: Navegación}
+
+\begin{frame}[fragile]{Dónde estamos y cómo nos movemos}
+    Comandos esenciales para no perderse:
+
+    \begin{description}
+        \item[\texttt{pwd}] \textbf{P}rint \textbf{W}orking \textbf{D}irectory. ¿Dónde estoy?
+        \item[\texttt{ls -lh}] Listar archivos con detalles y tamaño legible.
+        \item[\texttt{cd ..}] Ir al directorio anterior (padre).
+        \item[\texttt{cd \textasciitilde}] Ir a mi carpeta personal (Home).
+    \end{description}
+
+    \begin{exampleblock}{Tip de Oro: Autocompletado}
+    ¡Usa la tecla \textbf{TAB}!
+    Escribe \texttt{cd Doc} + \textbf{TAB} $\to$ \texttt{cd Documentos/}
+    \end{exampleblock}
+\end{frame}
+
+% --- Sección 3: Manipulación ---
+\section{Módulo 2: Gestión de Archivos}
+
+\begin{frame}[fragile]{Crear y Organizar}
+    La estructura de un proyecto de IA empieza aquí:
+
+    \begin{lstlisting}[language=bash]
+# Crear carpeta del proyecto
+mkdir proyecto_ia
+
+# Crear estructura anidada (flag -p)
+mkdir -p proyecto_ia/datos/raw
+
+# Crear archivo vacio
+touch proyecto_ia/readme.md
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{La Zona de Peligro: Borrado}
+    \begin{alertblock}{\textbf{ADVERTENCIA CRÍTICA}}
+    En la terminal \textbf{NO EXISTE LA PAPELERA DE RECICLAJE}.
+    \end{alertblock}
+
+    \begin{itemize}
+        \item \texttt{rm archivo.txt} $\to$ Se fue para siempre.
+        \item \texttt{rm -rf carpeta/} $\to$ Borra carpeta y contenido sin preguntar.
+    \end{itemize}
+
+    \vspace{0.5cm}
+    \textbf{Regla:} Piensa dos veces antes de presionar Enter con \texttt{rm}.
+\end{frame}
+
+% --- Sección 4: Datos y Edición ---
+\section{Módulo 3: Visualización de Datos}
+
+\begin{frame}[fragile]{Inspección de Datos (Big Data)}
+    No puedes abrir un CSV de 5GB en Excel. Usa esto:
+
+    \begin{itemize}
+        \item \textbf{\texttt{head -n 5 data.csv}}: Ver las primeras 5 filas (cabeceras).
+        \item \textbf{\texttt{tail -f server.log}}: Ver el final del archivo en \textit{tiempo real}.
+        \item \textbf{\texttt{cat archivo}}: Ver todo el contenido (cuidado si es grande).
+        \item \textbf{\texttt{less archivo}}: Navegar con flechas (salir con `q`).
+    \end{itemize}
+\end{frame}
+
+% --- Sección 5: Scripting ---
+\section{Módulo 4: Automatización (Bash)}
+
+\begin{frame}[fragile]{Automatización con Bash}
+    Ejemplo: Script \texttt{deploy.sh} para crear 3 zonas de monitoreo.
+
+    \begin{lstlisting}[language=bash]
+#!/bin/bash
+echo "Iniciando despliegue..."
+
+for i in {1..3}; do
+    echo "Creando Zona $i"
+    mkdir -p "zona_$i/sensores"
+
+    # Crear script Python automaticamente
+    cat << EOF > "zona_$i/sensores/main.py"
+print(f"Zona $i: Lista")
+EOF
+done
+    \end{lstlisting}
+
+    \small{Recuerda dar permisos: \texttt{chmod +x deploy.sh}}
+\end{frame}
+
+% --- Sección 6: Git ---
+\section{Módulo 5: Git}
+
+\begin{frame}{Control de Versiones con Git}
+    El ``Botón de Guardar'' de los ingenieros.
+
+    \begin{enumerate}
+        \item \textbf{\texttt{git init}}: ``Aquí empiezo a trackear cambios''.
+        \item \textbf{\texttt{git add .}}: ``Apartame estos cambios para la foto''.
+        \item \textbf{\texttt{git commit -m "msj"}}: ``Toma la foto y guárdala''.
+        \item \textbf{\texttt{git push}}: ``Sube la foto a la nube''.
+        \item \textbf{\texttt{git status}}: ``¿Cómo está mi proyecto?''.
+    \end{enumerate}
+\end{frame}
+
+% --- Sección 7: Extras Importantes ---
+\section{Extras y Trucos}
+
+\begin{frame}{Atajos de Teclado (Salvavidas)}
+    Memoriza esto para triplicar tu velocidad:
+
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{block}{Control}
+        \begin{itemize}
+            \item \textbf{Ctrl + C}: Abortar/Matar comando actual.
+            \item \textbf{Ctrl + L}: Limpiar pantalla (clear).
+            \item \textbf{Ctrl + D}: Cerrar terminal (exit).
+        \end{itemize}
+        \end{block}
+
+        \column{0.5\textwidth}
+        \begin{block}{Búsqueda}
+        \begin{itemize}
+            \item \textbf{Flecha Arriba}: Ver comando anterior.
+            \item \textbf{Ctrl + R}: Buscar en el historial (Reverse search). ¡Muy útil!
+        \end{itemize}
+        \end{block}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Resumen Final}
+    \centering
+    \Large
+    \textbf{Semana 1 Completada} \\
+    \vspace{0.5cm}
+    \normalsize
+    Ya tienen las bases: Moverse, Crear, Automatizar y Versionar. \\
+    \vspace{0.5cm}
+    \textit{¿Preguntas?}
+\end{frame}
+
+\end{document}

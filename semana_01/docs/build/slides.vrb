@@ -1,0 +1,19 @@
+\frametitle{Automatización con Bash}
+Ejemplo: Script \texttt{deploy.sh} para crear 3 zonas de monitoreo.
+
+    \begin{lstlisting}[language=bash]
+#!/bin/bash
+echo "Iniciando despliegue..."
+
+for i in {1..3}; do
+    echo "Creando Zona $i"
+    mkdir -p "zona_$i/sensores"
+
+    # Crear script Python automaticamente
+    cat << EOF > "zona_$i/sensores/main.py"
+print(f"Zona $i: Lista")
+EOF
+done
+    \end{lstlisting}
+
+    \small{Recuerda dar permisos: \texttt{chmod +x deploy.sh}}

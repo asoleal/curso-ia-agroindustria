@@ -1,0 +1,8 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Introducción: La Filosofía CLI}{3}{0}{1}
+\beamer@sectionintoc {2}{Módulo 1: Navegación}{5}{0}{2}
+\beamer@sectionintoc {3}{Módulo 2: Gestión de Archivos}{6}{0}{3}
+\beamer@sectionintoc {4}{Módulo 3: Visualización de Datos}{8}{0}{4}
+\beamer@sectionintoc {5}{Módulo 4: Automatización (Bash)}{9}{0}{5}
+\beamer@sectionintoc {6}{Módulo 5: Git}{10}{0}{6}
+\beamer@sectionintoc {7}{Extras y Trucos}{11}{0}{7}
