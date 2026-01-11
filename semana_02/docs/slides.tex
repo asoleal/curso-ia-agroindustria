@@ -1,0 +1,225 @@
+\documentclass[aspectratio=169, 12pt]{beamer}
+
+% --- PAQUETES Y FUENTES (XeLaTeX) ---
+\usepackage{fontspec}
+% Usamos fuentes seguras de Linux
+\setsansfont{DejaVu Sans}[Scale=0.9] 
+\setmonofont{DejaVu Sans Mono}[Scale=0.8]
+
+\usepackage{polyglossia}
+\setmainlanguage{spanish}
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, positioning, babel} % 'babel' es vital para evitar conflictos
+
+% --- TEMA Y COLORES ---
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Colores personalizados (Igual que el manual)
+\definecolor{primary}{RGB}{0, 85, 164}      % Azul Ingeniería
+\definecolor{accent}{RGB}{34, 139, 34}      % Verde Agro
+\definecolor{codebg}{RGB}{240, 240, 240}
+
+% Aplicar colores al tema
+\setbeamercolor{structure}{fg=primary}
+\setbeamercolor{palette primary}{bg=primary, fg=white}
+\setbeamercolor{palette secondary}{bg=primary!80!black, fg=white}
+\setbeamercolor{palette tertiary}{bg=primary!60!black, fg=white}
+\setbeamercolor{frametitle}{bg=primary, fg=white}
+\setbeamercolor{block title}{bg=primary, fg=white}
+\setbeamercolor{block body}{bg=blue!5!white, fg=black}
+\setbeamercolor{alerted text}{fg=accent}
+
+% --- CONFIGURACIÓN DE CÓDIGO (LITERATE PARA EMOJIS) ---
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{gray}\itshape,
+    keywordstyle=\color{primary}\bfseries,
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{accent},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    showstringspaces=false,
+    frame=lines,
+    % Truco para reemplazar emojis por texto seguro
+    literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+    {⚠️}{{\textcolor{orange}{\textbf{!}}}}1
+    {💧}{{\textcolor{blue}{\textbf{O}}}}1
+    {✅}{{\textcolor{green}{\textbf{OK}}}}1
+}
+\lstset{style=pythonstyle}
+
+% --- DATOS DE LA PRESENTACIÓN ---
+\title[Ingeniería de Software I]{Fundamentos de Computación Científica}
+\subtitle{Lógica Algorítmica y Vectorización para IA}
+\author{Semana 02}
+\institute{IA Aplicada al Agro}
+\date{\today}
+
+\begin{document}
+
+% --- SLIDE 1: PORTADA ---
+\begin{frame}
+    \titlepage
+    \centering
+    \small \textit{"El código no solo debe funcionar, debe escalar."}
+\end{frame}
+
+% --- SLIDE 2: AGENDA ---
+\begin{frame}{Hoja de Ruta}
+    \tableofcontents
+\end{frame}
+
+% --- SECCIÓN 1 ---
+\section{Lógica Defensiva}
+
+\begin{frame}[fragile]{1. El Principio "Fail Fast"}
+    En ingeniería, un error silencioso es peor que un error ruidoso.
+    
+    \begin{alertblock}{Problema: Arrow Code}
+        Anidar \texttt{if} dentro de \texttt{if} hace el código ilegible y difícil de mantener.
+    \end{alertblock}
+
+\begin{lstlisting}
+# MAL: Dificil de leer
+def sistema_riego(sensor):
+    if sensor.activo:
+        if sensor.humedad < 30:
+            activar_bombas()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Guard Clauses (Cláusulas de Guardia)}
+    Validamos lo negativo primero y retornamos. El código "feliz" queda plano.
+
+\begin{lstlisting}
+# BIEN: Ingenieria de Software
+def sistema_riego(sensor):
+    # 1. Validacion (Fail Fast)
+    if not sensor.activo:
+        return "Error: Sensor inactivo"
+        
+    # 2. Logica de Negocio
+    if sensor.humedad < 30:
+        activar_bombas()
+        return "Regando..."
+        
+    return "En espera"
+\end{lstlisting}
+\end{frame}
+
+% --- SECCIÓN 2 ---
+\section{Memoria y Complejidad}
+
+\begin{frame}{2. Listas vs. Arrays (La verdad de la RAM)}
+    ¿Por qué Python puro es lento? Porque las listas son punteros dispersos.
+    
+    \vspace{0.5cm}
+    \centering
+    \begin{tikzpicture}[scale=0.8, transform shape]
+        % Lista Python
+        \node at (0, 2) {\textbf{Python List}};
+        \foreach \x in {0, 1.2, 2.4} {
+            \draw[fill=gray!20] (\x,0) rectangle (\x+0.8,0.5);
+            \draw[->, thick] (\x+0.4, 0.25) -- (\x+0.4, -0.8);
+            \draw[fill=blue!10] (\x+rand*0.3, -1.5) circle (0.3);
+        }
+        
+        % Flecha separadora
+        \draw[->, ultra thick, primary] (3.5, 0) -- (4.5, 0);
+
+        % NumPy Array
+        \node at (6.5, 2) {\textbf{NumPy Array}};
+        \draw[fill=primary!20] (5, -0.5) rectangle (8, 0.5);
+        \node at (5.5,0) {1};
+        \node at (6.5,0) {2};
+        \node at (7.5,0) {3};
+        \node[align=center] at (6.5, -1.5) {\textbf{Bloque Contiguo}\\(SIMD Ready)};
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Complejidad Computacional (Big O)}
+    Analizar 1 millón de plantas.
+    
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Python Loop (Iterativo)}
+        \begin{itemize}
+            \item Verifica tipo de dato en cada paso.
+            \item No usa caché del CPU.
+            \item Tiempo: $\approx 300ms$
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \textbf{NumPy (Vectorizado)}
+        \begin{itemize}
+            \item Operación en C optimizado.
+            \item Usa instrucciones SIMD.
+            \item Tiempo: $\approx 5ms$
+        \end{itemize}
+    \end{columns}
+    
+    \vspace{0.5cm}
+    \centering
+    \textcolor{accent}{\textbf{¡NumPy es 60x más rápido!}}
+\end{frame}
+
+% --- SECCIÓN 3 ---
+\section{Vectorización Práctica}
+
+\begin{frame}[fragile]{3. Pensar en Matrices, no en Bucles}
+    \textbf{Objetivo:} Encontrar zonas de sequía en un campo de $100 \times 100$.
+
+\begin{lstlisting}
+import numpy as np
+
+# Generar datos simulados
+campo = np.random.rand(100, 100)
+
+# MALA PRACTICA (Estilo C antiguo)
+# for i in range(100):
+#     for j in range(100): ...
+
+# BUENA PRACTICA (Vectorizacion)
+# Crea una mascara booleana instantanea
+zonas_sequia = campo < 0.3 
+
+print(f"Hectareas afectadas: {np.sum(zonas_sequia)}")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Lógica Condicional: np.where}
+    El equivalente a \texttt{=SI()} de Excel, pero masivo.
+    
+    $$ R = \text{np.where}(\text{condición}, \text{Valor SI}, \text{Valor NO}) $$
+
+\begin{lstlisting}
+# Calculo de riego necesario
+# Si humedad < 0.4, echar agua hasta llegar a 0.5
+# Si no, echar 0 agua.
+
+agua = np.where(campo < 0.4, 0.5 - campo, 0)
+\end{lstlisting}
+\end{frame}
+
+% --- CIERRE ---
+\begin{frame}{Próximos Pasos}
+    \begin{block}{Semana 03: Big Data}
+    \begin{itemize}
+        \item \textbf{Pandas:} Manejo de archivos CSV gigantes.
+        \item \textbf{Matplotlib:} Visualización de datos.
+        \item \textbf{Limpieza:} Manejo de datos corruptos (NaN).
+    \end{itemize}
+    \end{block}
+    
+    \vspace{1cm}
+    \centering
+    \Large \textbf{¿Preguntas?}
+\end{frame}
+
+\end{document}

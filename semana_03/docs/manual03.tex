@@ -1,0 +1,256 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- MOTOR DE FUENTES (XeLaTeX) ---
+\usepackage{fontspec}
+% Fuentes seguras de Linux (Arch Compatible)
+\setmainfont{DejaVu Sans}[
+    BoldFont={DejaVu Sans Bold},
+    ItalicFont={DejaVu Sans Oblique},
+    Scale=0.9
+]
+\setmonofont{DejaVu Sans Mono}[Scale=0.8]
+
+% --- IDIOMA ---
+\usepackage{polyglossia}
+\setmainlanguage{spanish}
+
+% --- PAQUETES ---
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, positioning, babel, matrix}
+
+% --- GEOMETRÍA ---
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=4cm, marginparwidth=3cm}
+\setlength{\headheight}{28pt}
+
+% --- COLORES ---
+\definecolor{primary}{RGB}{0, 85, 164}      % Azul Ingeniería
+\definecolor{accent}{RGB}{34, 139, 34}      % Verde Agro
+\definecolor{danger}{RGB}{204, 0, 0}        % Rojo Alerta
+\definecolor{pandas}{RGB}{19, 7, 84}        % Azul oscuro (Pandas)
+\definecolor{codebg}{RGB}{245, 247, 250}
+
+% --- CAJAS ---
+\newtcolorbox{conceptbox}[1]{
+  colback=blue!5!white, colframe=primary, title=#1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm, shadow={2mm}{-2mm}{0mm}{black!20}
+}
+
+\newtcolorbox{agrobox}[1]{
+  colback=green!5!white, colframe=accent, title=#1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm
+}
+
+\newtcolorbox{warningbox}[1]{
+  colback=red!5!white, colframe=danger, title=#1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm
+}
+
+% --- ESTILO DE CÓDIGO (FIX EMOJIS) ---
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{gray}\itshape,
+    keywordstyle=\color{pandas}\bfseries, % Keywords estilo Pandas
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{accent},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=l,
+    rulecolor=\color{pandas},
+    numbers=left,
+    showstringspaces=false,
+    literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+    {⚠}{{\textcolor{orange}{\bfseries !}}}1
+    {NaN}{{\textcolor{red}{\bfseries NaN}}}3 % Resaltar NaN en rojo
+}
+\lstset{style=pythonstyle}
+
+% --- ENCABEZADO ---
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Ingeniería de Software I}}
+\rhead{Semana 03: Pandas y Big Data}
+\rfoot{\thepage}
+
+\title{\textbf{Domando Datos Reales con Pandas}\\ Limpieza, Análisis y Series Temporales}
+\author{Curso de IA Aplicada al Agro}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section*{Introducción: ¿Por qué NumPy no es suficiente?}
+
+En la Semana 02 aprendimos que NumPy es rapidísimo para matrices numéricas. Pero el mundo real no son solo números; son etiquetas, fechas y datos sucios.
+
+Imagina una tabla de Excel de una estación meteorológica. Tiene:
+\begin{itemize}
+    \item \textit{Fechas} (Time Series).
+    \item \textit{Texto} (Nombres de sensores, ubicación).
+    \item \textit{Huecos} (Celdas vacías porque se fue la luz).
+\end{itemize}
+
+Para esto existe \textbf{Pandas}. Es una librería construida sobre NumPy que añade etiquetas y manejo de errores.
+
+\begin{center}
+\begin{tikzpicture}
+    % NumPy
+    \node (numpy) [draw=primary, thick, fill=blue!10, minimum width=3cm, minimum height=2cm, align=center] {
+        \textbf{NumPy Array}\\
+        Sólo Números\\
+        Indices: 0, 1, 2...
+    };
+
+    % Flecha
+    \draw[->, ultra thick, gray] (numpy) -- ++(4,0) node[midway, above] {Evolución};
+
+    % Pandas
+    \node (pandas) [right=of numpy, xshift=1cm, draw=pandas, thick, fill=blue!5, minimum width=3cm, minimum height=2cm, align=center] {
+        \textbf{Pandas DataFrame}\\
+        Números + Texto + Fechas\\
+        Indices: "2024-01-01"...\\
+        Nombres de Columnas
+    };
+\end{tikzpicture}
+\end{center}
+
+\newpage
+
+\section{Capítulo I: El DataFrame}
+
+El objeto principal de Pandas es el `DataFrame`. Piensa en él como una hoja de cálculo programable.
+
+\subsection{Creación y Carga de Datos}
+Rara vez creamos DataFrames a mano; usualmente los cargamos desde archivos.
+
+\begin{lstlisting}[language=Python, caption={Cargar un CSV de Cosecha}]
+import pandas as pd
+
+# Leer archivo separado por comas
+# index_col=0 usa la primera columna como indice (ID)
+df = pd.read_csv('cosecha_2024.csv', index_col=0)
+
+# Ver las primeras 5 filas
+print(df.head())
+
+# Ver informacion tecnica (tipos de datos, memoria)
+print(df.info())
+\end{lstlisting}
+
+\subsection{Selección de Datos: loc vs iloc}
+Esta es la fuente de confusión \#1.
+\begin{itemize}
+    \item \texttt{.loc[]}: Busca por Etiqueta (Nombre).
+    \item \texttt{.iloc[]}: Busca por Índice Numérico (Posición).
+\end{itemize}
+
+\begin{lstlisting}[language=Python]
+# Seleccionar columna 'Humedad' de la fila 'Sensor_A'
+dato = df.loc['Sensor_A', 'Humedad']
+
+# Seleccionar fila 0, columna 2
+dato_raw = df.iloc[0, 2]
+\end{lstlisting}
+
+\newpage
+
+\section{Capítulo II: Limpieza de Datos (Data Cleaning)}
+
+En el agro, los datos son ruidosos. Un sensor de humedad puede desconectarse y enviar valores vacíos o basura.
+
+\begin{warningbox}{El Peligro del NaN}
+En computación científica, \textbf{NaN} significa \textit{Not a Number}. Si intentas sumar \texttt{5 + NaN}, el resultado es \texttt{NaN}. Un solo dato faltante puede arruinar todo el cálculo de promedio anual.
+\end{warningbox}
+
+\subsection{Detectar Datos Faltantes}
+Pandas nos permite ver dónde están los huecos.
+
+\begin{lstlisting}[language=Python]
+# Crear un reporte de datos faltantes por columna
+print(df.isna().sum())
+
+# Salida ejemplo:
+# Temperatura      0
+# Humedad         15  <-- 15 lecturas perdidas!
+# pH               2
+\end{lstlisting}
+
+\subsection{Estrategias de Corrección}
+Como ingenieros, debemos decidir qué hacer con esos huecos.
+
+1. Eliminar (Drop): Si hay pocos datos malos, bórralos.
+2. Imputar (Fill): Rellenar con un promedio o el valor anterior.
+
+\begin{lstlisting}[language=Python, caption={Sanitización de Sensores}]
+# ESTRATEGIA 1: Borrar filas con huecos
+df_limpio = df.dropna()
+
+# ESTRATEGIA 2: Rellenar (Ideal para series de tiempo)
+# 'ffill' (Forward Fill) toma el ultimo valor valido y lo repite.
+# Si a las 10:00 hizo 25C y a las 11:00 es NaN, asume 25C.
+df_relleno = df.fillna(method='ffill')
+
+# ESTRATEGIA 3: Rellenar con promedio
+promedio = df['Humedad'].mean()
+df['Humedad'] = df['Humedad'].fillna(promedio)
+\end{lstlisting}
+
+\newpage
+
+\section{Capítulo III: Filtrado y Estadística}
+
+Podemos hacer preguntas complejas a los datos sin usar bucles.
+
+\begin{agrobox}{Caso de Uso: Alerta de Hongos}
+Los hongos proliferan con humedad alta ($>80\%$) y temperaturas moderadas ($>20^\circ$C). Filtremos esos días.
+\end{agrobox}
+
+\begin{lstlisting}[language=Python, caption={Filtrado Multicriterio}]
+# Filtro booleano (Igual que NumPy, pero con nombres)
+riesgo_hongos = df[ (df['Humedad'] > 80) & (df['Temperatura'] > 20) ]
+
+print("Dias con riesgo de hongos:")
+print(riesgo_hongos)
+\end{lstlisting}
+
+\subsection{Agrupación (GroupBy)}
+El poder de las tablas dinámicas de Excel, pero en código.
+
+\begin{lstlisting}[language=Python]
+# Supongamos que tenemos columna 'Zona' (Norte, Sur, Este)
+# Queremos el promedio de rendimiento por zona.
+
+resumen = df.groupby('Zona')['Rendimiento'].mean()
+print(resumen)
+\end{lstlisting}
+
+\section*{Reto Semanal: El Dataset Sucio}
+
+Se te entregará un archivo \texttt{clima\_corrupto.csv}.
+\begin{enumerate}
+    \item Cárgalo en un DataFrame.
+    \item Encuentra cuántas filas tienen \texttt{NaN}.
+    \item Rellena las temperaturas faltantes usando interpolación lineal (`.interpolate()`).
+    \item Calcula la temperatura promedio mensual.
+    \item Exporta el resultado a \texttt{clima\_limpio.csv}.
+\end{enumerate}
+
+\begin{lstlisting}[language=Python]
+# Pista para exportar
+df.to_csv('clima_limpio.csv')
+\end{lstlisting}
+
+\end{document}

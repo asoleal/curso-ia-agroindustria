@@ -1,6 +1,22 @@
 \documentclass[11pt, a4paper]{article}
-\usepackage{fontspec} % Requiere XeLaTeX
-\usepackage[spanish]{babel}
+
+% --- MOTOR DE FUENTES (XeLaTeX) ---
+\usepackage{fontspec}
+
+% Intentamos cargar fuentes comunes en Linux.
+% Si no tienes "DejaVu Sans", puedes cambiarlo por "Arial" o "FreeSans".
+\setmainfont{DejaVu Sans}[
+    BoldFont={DejaVu Sans Bold},
+    ItalicFont={DejaVu Sans Oblique},
+    Scale=0.9
+]
+\setmonofont{DejaVu Sans Mono}[Scale=0.8] % Fuente para código que soporta Unicode
+
+% --- IDIOMA ---
+\usepackage{polyglossia}
+\setmainlanguage{spanish}
+
+% --- PAQUETES DE DISEÑO Y MATEMÁTICAS ---
 \usepackage{geometry}
 \usepackage{xcolor}
 \usepackage{listings}
@@ -9,77 +25,69 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
-\usepackage{marginnote}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, positioning, babel}
 
-% --- Ajuste de encabezado ---
+% --- GEOMETRÍA ---
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=4cm, marginparwidth=3cm}
 \setlength{\headheight}{28pt}
 
-% --- Geometría ---
-\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=4cm, marginparwidth=3cm}
-
-% --- Colores Institucionales y de Código ---
-\definecolor{primary}{RGB}{0, 85, 164}      % Azul Ingeniería
-\definecolor{accent}{RGB}{34, 139, 34}      % Verde Agro
-\definecolor{alert}{RGB}{204, 0, 0}         % Rojo Alerta
+% --- COLORES ---
+\definecolor{primary}{RGB}{0, 85, 164}
+\definecolor{accent}{RGB}{34, 139, 34}
+\definecolor{danger}{RGB}{204, 0, 0}
 \definecolor{codebg}{RGB}{245, 247, 250}
 
-% --- Cajas personalizadas ---
+% --- CAJAS PERSONALIZADAS ---
 \newtcolorbox{conceptbox}[1]{
-  colback=blue!5!white,
-  colframe=primary,
-  title=#1,
-  fonttitle=\bfseries,
-  boxrule=0.5mm,
-  arc=2mm,
-  shadow={2mm}{-2mm}{0mm}{black!20}
+  colback=blue!5!white, colframe=primary, title=#1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm, shadow={2mm}{-2mm}{0mm}{black!20}
 }
 
 \newtcolorbox{agrobox}[1]{
-  colback=green!5!white,
-  colframe=accent,
-  title=#1,
-  fonttitle=\bfseries,
-  boxrule=0.5mm,
-  arc=2mm
+  colback=green!5!white, colframe=accent, title=#1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm
 }
 
-\newtcolorbox{mathalert}[1]{
-  colback=red!5!white,
-  colframe=alert,
-  title=#1,
-  fonttitle=\bfseries,
-  boxrule=0.5mm,
-  arc=2mm
+\newtcolorbox{warningbox}[1]{
+  colback=red!5!white, colframe=danger, title=#1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm
 }
 
-% --- Estilo de código Python ---
+% --- CONFIGURACIÓN DE CÓDIGO (SOLUCIÓN A EMOJIS) ---
 \lstdefinestyle{pythonstyle}{
     backgroundcolor=\color{codebg},
     commentstyle=\color{gray}\itshape,
     keywordstyle=\color{primary}\bfseries,
     numberstyle=\tiny\color{gray},
     stringstyle=\color{accent},
-    basicstyle=\ttfamily\footnotesize, % Un poco más pequeño para que quepa bien
+    basicstyle=\ttfamily\footnotesize,
     breaklines=true,
     frame=l,
     rulecolor=\color{primary},
     numbers=left,
     showstringspaces=false,
-    literate={"}{{\textquotedbl}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+    % Aquí mapeamos caracteres especiales para que no den error
+    literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+    {⚠}{{\textcolor{orange}{\bfseries !}}}1  % Reemplaza emoji por exclamación
+    {💧}{{\textcolor{blue}{O}}}1            % Reemplaza gota por O
+    {✅}{{\textcolor{green}{OK}}}1           % Reemplaza check por OK
+    {—}{{--}}1                               % Guion largo
+    {–}{{--}}1                               % Guion medio
 }
 \lstset{style=pythonstyle}
 
-% --- Encabezado ---
+% --- ENCABEZADO ---
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\textbf{Ingeniería de Software I}}
-% Asegúrate de que logo_unal.png esté en la misma carpeta al compilar
-\rhead{\includegraphics[height=0.8cm]{logo_unal.png}}
+\rhead{Semana 02: Python para IA Agroindustrial}
 \rfoot{\thepage}
 
-\title{\includegraphics[width=4cm]{logo_unal.png}\\[1cm] \textbf{Fundamentos de Computación Científica}\\ Lógica Algorítmica y Vectorización para IA Agroindustrial}
+\title{\textbf{Python para Ciencia de Datos Agroindustrial}\\ Fundamentos Prácticos para la Inteligencia Artificial}
 \author{Curso de IA Aplicada al Agro}
 \date{\today}
 
@@ -89,149 +97,218 @@
 \tableofcontents
 \newpage
 
-\section*{Prefacio: El Ingeniero vs. El Programador}
+\section*{Prefacio: Python como Asistente Inteligente del Campo}
 
-En la Semana 1 dominaste la terminal. Ahora, en la Semana 2, dejaremos de escribir ``scripts'' para empezar a construir \textbf{Ingeniería de Datos}.
+Tras dominar la terminal y Git en la Semana 1, ahora usarás \textbf{Python para dar inteligencia a tus datos}. Este lenguaje es la herramienta estándar en IA porque es legible, flexible y tiene librerías poderosas.
 
-Python es el lenguaje estándar de la IA, no por su velocidad (es lento), sino por su capacidad de conectarse con librerías de alto rendimiento escritas en C, como \textbf{NumPy}.
-
-Al finalizar este módulo, entenderás:
+Al finalizar, podrás:
 \begin{itemize}
-    \item La matemática detrás de las decisiones lógicas ($A \land B$).
-    \item Por qué los bucles \texttt{for} destruyen el rendimiento en Big Data.
-    \item Cómo procesar imágenes satelitales usando matrices (Tensores).
+    \item Escribir scripts que evalúen condiciones de cultivo.
+    \item Procesar mediciones de sensores y archivos CSV.
+    \item Entender por qué NumPy es esencial para la IA.
+    \item Guardar tu trabajo en Git, como un verdadero ingeniero.
 \end{itemize}
+
+> \textbf{Recuerda}: No se trata de memorizar sintaxis, sino de resolver problemas reales del agro — y versionar tus soluciones.
 
 \newpage
 
-% ==========================================
-% CAPITULO 1
-% ==========================================
-\section{Capítulo I: Lógica Algorítmica y Complejidad}
+\section{Capítulo I: Automatizar Decisiones Agronómicas}
 
-La programación es la automatización de la lógica matemática. Un ingeniero no solo escribe código que funciona; escribe código que \textit{escala}.
+La programación es simplemente \textbf{automatizar reglas}. En agroindustria, ya usas reglas todos los días:
+\textit{“Si la humedad es baja y la temperatura alta, riego.”}
+Python te permite codificar esas reglas.
 
-\subsection{Variables y Tipos de Datos}
-En álgebra, $x$ es una incógnita. En computación, una variable es una \textbf{dirección de memoria}.
+\subsection{Variables: Etiquetas para tus datos}
+Una variable guarda un valor. Piensa en ellas como etiquetas en frascos de laboratorio.
 
-\begin{lstlisting}[language=Python, caption={Tipos de datos en Agro-IA}]
-ph_suelo = 5.8          # float (Reales)
-id_sensor = 1024        # int (Enteros)
-zona = "Lote Norte"     # str (Cadenas)
-riego_activo = True     # bool (Lógica Binaria)
+\begin{lstlisting}[language=Python, caption={Datos de una parcela}]
+temperatura = 28.5   # en grados Celsius
+humedad = 72         # en porcentaje
+parcela = "Zona Norte"
+activo = True        # Sensor activo
 \end{lstlisting}
 
-\subsection{Lógica Booleana (El cerebro de la IA)}
-Las decisiones se basan en tablas de verdad. Los operadores Python tienen equivalentes matemáticos exactos:
+\subsection{Decisiones automáticas: if / elif / else}
+Python evalúa condiciones y actúa según reglas.
 
-\begin{itemize}
-    \item \texttt{and} $\leftrightarrow$ Conjunción ($A \land B$)
-    \item \texttt{or} $\leftrightarrow$ Disyunción ($A \lor B$)
-    \item \texttt{not} $\leftrightarrow$ Negación ($\neg A$)
-\end{itemize}
-
-\begin{lstlisting}[language=Python, caption={Lógica de Control de Riego}]
-# Regla: Regar SI (Humedad < 30%) Y (No está lloviendo)
-if (humedad < 30) and (not lloviendo):
-    activar_bombas()
+\begin{lstlisting}[language=Python, caption={Sistema de riego automático}]
+if humedad < 40:
+    print("⚠️ Riego necesario en", parcela)
+elif humedad > 80:
+    print("💧 Drenaje recomendado")
+else:
+    print("✅ Condiciones óptimas")
 \end{lstlisting}
 
-\subsection{Complejidad Computacional (Big O)}
-\marginnote{\textbf{Nota de Ingeniería:} En Big Data, ignoramos las constantes. Nos importa la tendencia cuando $N \to \infty$.}
-
-Aquí es donde se separa al novato del experto. ¿Qué pasa si tienes que analizar 1 millón de plantas?
-
-\begin{mathalert}{El Peligro de los Bucles Anidados ($O(N^2)$)}
-Si tienes una lista de $N$ parcelas y usas un bucle dentro de otro bucle, el tiempo de ejecución crece cuadráticamente.
-$$ N = 10,000 \rightarrow \text{Operaciones} = 100,000,000 $$
-\textbf{Regla:} En Python para IA, evita los bucles \texttt{for} siempre que sea posible.
-\end{mathalert}
-
-\newpage
-
-% ==========================================
-% CAPITULO 2
-% ==========================================
-\section{Capítulo II: Estructuras de Datos y Memoria}
-
-\subsection{Listas vs. Arrays (La verdad oculta)}
-Una lista de Python \texttt{[1, 2, 3]} es flexible pero ineficiente. En la memoria RAM, es una colección de \textit{punteros} dispersos. El procesador pierde tiempo buscando cada dato.
-
-\subsection{NumPy: La base del Deep Learning}
-NumPy crea \textbf{Arrays}: bloques contiguos de memoria optimizada (como en C o Fortran). Esto permite operaciones SIMD (Single Instruction, Multiple Data).
-
-\begin{conceptbox}{Comparativa de Velocidad}
-Procesar 1 millón de datos:
-\begin{itemize}
-    \item \textbf{Python List:} $\approx$ 300 ms (Milisegundos)
-    \item \textbf{NumPy Array:} $\approx$ 5 ms
-\end{itemize}
-¡Es 60 veces más rápido! Fundamental para entrenar IAs.
-\end{conceptbox}
-
-\subsection{Vectorización y Broadcasting}
-En lugar de iterar por cada elemento, operamos sobre toda la matriz a la vez.
-
-\begin{lstlisting}[language=Python, caption={Vectorización: El estilo NumPy}]
-import numpy as np
-
-# Matriz 1000x1000 simulando humedad del terreno
-terreno = np.random.rand(1000, 1000)
-
-# PROBLEMA: Calibrar sensores sumando 0.1 a todo el terreno
-# FORMA INCORRECTA (Lenta - O(N^2)):
-# for i in rows: for j in cols: terreno[i][j] += 0.1
-
-# FORMA CORRECTA (Vectorizada - Instantánea):
-terreno_calibrado = terreno + 0.1
-\end{lstlisting}
-
-\begin{agrobox}{Caso de Uso Real: Imágenes Satelitales}
-Una imagen satelital no es más que una matriz de números (R, G, B, Infrarrojo).
-Detectar vegetación (NDVI) es simplemente una operación matricial:
-$$ NDVI = \frac{(NIR - RED)}{(NIR + RED)} $$
-Con NumPy, esta fórmula se aplica a millones de píxeles en milisegundos.
+\begin{agrobox}{Aplicación en IA}
+Los modelos de Machine Learning (como árboles de decisión) toman miles de decisiones como esta, pero aprendidas de los datos, no escritas a mano.
 \end{agrobox}
 
-\newpage
+\subsection{Repetición eficiente: bucles \texttt{for}}
+Cuando tienes múltiples parcelas, no repites código: usas un bucle.
 
-% ==========================================
-% CAPITULO 3
-% ==========================================
-\section{Capítulo III: Taller Práctico - Simulación de Cultivos}
+\begin{lstlisting}[language=Python, caption={Análisis de varias parcelas}]
+rendimientos = [25, 30, 28, 32]  # qq/ha
 
-Vamos a crear un sistema que simule el crecimiento de cultivos en una matriz, aplicando factores aleatorios (clima).
-
-\subsection{Requerimientos}
-Crear un script \texttt{simulacion.py} que:
-\begin{enumerate}
-    \item Genere un campo de $50 \times 50$ parcelas con salud inicial aleatoria (0.0 a 1.0).
-    \item Simule una "plaga" que reduce la salud en un 20\% en zonas aleatorias.
-    \item Calcule estadísticas finales (promedio, desviación estándar).
-\end{enumerate}
-
-\begin{lstlisting}[language=Python, caption={simulacion.py (Snippet)}]
-import numpy as np
-
-# 1. Crear campo (50x50)
-campo = np.random.uniform(0.5, 1.0, (50, 50))
-
-# 2. Simular Plaga (Máscara Booleana)
-# La plaga afecta al 10% del campo aleatoriamente
-zona_plaga = np.random.rand(50, 50) < 0.1
-campo[zona_plaga] = campo[zona_plaga] - 0.2
-
-# 3. Reporte
-print(f"Salud Promedio: {np.mean(campo):.2f}")
-print(f"Parcelas Críticas (<0.4): {np.sum(campo < 0.4)}")
+for i in range(len(rendimientos)):
+    r = rendimientos[i]
+    if r > 30:
+        print(f"Parcela {i+1}: Alta productividad ({r} qq/ha)")
+    else:
+        print(f"Parcela {i+1}: Revisar manejo ({r} qq/ha)")
 \end{lstlisting}
 
-\section*{Próximos Pasos}
-En la Semana 3, conectaremos esto con el mundo real:
-\begin{itemize}
-    \item Leer archivos CSV gigantes con \textbf{Pandas}.
-    \item Limpieza de datos (Data Cleaning).
-    \item Visualización científica con \textbf{Matplotlib}.
-\end{itemize}
+\subsection{Funciones: Empaqueta tu lógica}
+Una función es una receta reutilizable.
+
+\begin{lstlisting}[language=Python, caption={Evaluación de suelo}]
+def evaluar_suelo(ph):
+    """Devuelve una recomendación según el pH del suelo."""
+    if ph < 5.5:
+        return "Ácido – necesita cal"
+    elif ph > 7.5:
+        return "Alcalino – necesita azufre"
+    else:
+        return "pH óptimo"
+
+print("Recomendación:", evaluar_suelo(6.2))
+\end{lstlisting}
+
+\newpage
+
+\section{Capítulo II: Trabajar con Datos Reales}
+
+En la agroindustria, los datos viven en archivos. Aprenderás a leerlos y organizarlos.
+
+\subsection{Listas: Series de mediciones}
+Ideal para temperaturas diarias, rendimientos por parcela, etc.
+
+\begin{lstlisting}[language=Python]
+temperaturas = [22.1, 23.5, 25.0, 24.8, 26.2]
+promedio = sum(temperaturas) / len(temperaturas)
+print(f"Temp. promedio: {promedio:.1f} C")
+\end{lstlisting}
+
+\subsection{Diccionarios: Registros estructurados}
+Útil para representar sensores, parcelas o lotes.
+
+\begin{lstlisting}[language=Python, caption={Sensor inteligente}]
+sensor_zona1 = {
+    "nombre": "Zona A",
+    "temperatura": 26.3,
+    "humedad": 68,
+    "activo": True
+}
+
+print(f"{sensor_zona1['nombre']}: {sensor_zona1['temperatura']} C")
+\end{lstlisting}
+
+\subsection{Archivos CSV: Leer datos del mundo real}
+Un archivo CSV es una tabla. Puedes leerlo línea por línea:
+
+\begin{lstlisting}[language=Python, caption={Lectura manual de cosecha.csv}]
+with open('cosecha.csv', 'r') as f:
+    lineas = f.readlines()
+
+# Saltar encabezado
+for linea in lineas[1:]:
+    parcela, rend, hum = linea.strip().split(',')
+    print(f"{parcela}: {rend} qq/ha, humedad {hum}%")
+\end{lstlisting}
+
+\newpage
+
+\section{Capítulo III: Hacia la Eficiencia — Introducción a NumPy}
+
+Cuando tus datos crecen, el código común se vuelve lento. Aquí entra \textit{NumPy}.
+
+\subsection{¿Por qué NumPy? Un ejemplo con datos reales}
+Supón que tienes un archivo \texttt{temperaturas.txt} con 365 valores.
+
+\begin{lstlisting}[language=Python, caption={Con listas (lento)}]
+temps = []
+with open('temperaturas.txt') as f:
+    for linea in f:
+        temps.append(float(linea))
+
+dias_calurosos = sum(1 for t in temps if t > 30)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Con NumPy (rápido y limpio)}]
+import numpy as np
+temps = np.loadtxt('temperaturas.txt')
+dias_calurosos = np.sum(temps > 30)
+\end{lstlisting}
+
+\begin{conceptbox}{¿Qué cambia?}
+NumPy almacena los números de forma compacta y usa operaciones optimizadas en C. Para IA, siempre usamos NumPy.
+\end{conceptbox}
+
+\vspace{0.5cm}
+
+% Diagrama TikZ: memoria dispersa vs contigua
+\begin{center}
+\begin{tikzpicture}
+    % Lista Python
+    \node at (0, 1.5) {\textbf{Lista de Python (Dispersa)}};
+    \foreach \x in {0, 1.5, 3} {
+        \draw[fill=gray!20] (\x,0) rectangle (\x+0.8,0.5);
+        \draw[->, thick] (\x+0.4, 0.25) -- (\x+0.4, -0.8);
+        \draw[fill=blue!10] (\x+rand*0.5, -1.5) circle (0.3);
+    }
+
+    % NumPy Array
+    \node at (6, 1.5) {\textbf{Array de NumPy (Contiguo)}};
+    \draw[fill=blue!20] (4.5, -0.5) rectangle (7.5, 0.5);
+    \node at (5,0) {Dato};
+    \node at (6,0) {Dato};
+    \node at (7,0) {Dato};
+    \node[align=center] at (6, -1.5) {Bloque C/C++\\Optimizado (SIMD)};
+\end{tikzpicture}
+\end{center}
+
+\subsection{Operaciones vectorizadas: sin bucles}
+Todas las operaciones en NumPy se aplican a todo el array a la vez.
+
+\begin{lstlisting}[language=Python, caption={Procesamiento de imágenes satelitales (simulado)}]
+import numpy as np
+
+# Matriz 100x100: humedad del suelo en una finca
+humedad = np.random.rand(100, 100)
+
+# Zonas con riesgo de sequía (humedad < 0.3)
+sequia = humedad < 0.3
+
+# Contar celdas en sequía
+area_sequia = np.sum(sequia)
+print(f"Area en sequia: {area_sequia} m2")
+\end{lstlisting}
+
+\subsection{Lógica condicional vectorizada: \texttt{np.where}}
+Para tomar decisiones complejas sobre una matriz:
+
+\begin{lstlisting}[language=Python, caption={Presupuesto hídrico automático}]
+agua_necesaria = np.where(humedad < 0.4, (0.5 - humedad), 0)
+print(f"Agua necesaria: {np.sum(agua_necesaria):.2f}")
+\end{lstlisting}
+
+\section*{Reto Final: Sistema de Alerta para Cultivos}
+
+Crea un script \texttt{alerta\_cultivo.py} que defina 3 zonas y evalúe sequía.
+
+\begin{lstlisting}[language=Python, basicstyle=\ttfamily\footnotesize]
+zonas = [
+    {"nombre": "Norte", "humedad": 35},
+    {"nombre": "Sur", "humedad": 60},
+    {"nombre": "Este", "humedad": 28}
+]
+
+def alerta_sequia(humedad):
+    return "RIESGO" if humedad < 40 else "OK"
+
+for z in zonas:
+    print(f"{z['nombre']}: {alerta_sequia(z['humedad'])}")
+\end{lstlisting}
 
 \end{document}
