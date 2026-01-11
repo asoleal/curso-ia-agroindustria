@@ -1,43 +1,46 @@
 import numpy as np
-import time
 
-print("\n--- 🛰️  SISTEMA DE ANÁLISIS SATELITAL (HPC) ---")
+"""
+TALLER SEMANA 02: Análisis Espacial de Cultivos
+Misión: Analizar un lote de 100x100 metros usando matrices.
+"""
 
-# CONFIGURACIÓN: 1 Millón de Píxeles
-FILAS, COLUMNAS = 1000, 1000
-TOTAL_PIXELES = FILAS * COLUMNAS
 
-print(f"📡 Generando imagen espectral de {FILAS}x{COLUMNAS}...")
+def analizar_lote():
+    # 1. Configuración del Terreno (Matriz 100x100)
+    # Valores entre 0.0 (Seco) y 1.0 (Inundado)
+    print("📡 Escaneando terreno satelital...")
+    humedad_suelo = np.random.uniform(low=0.1, high=0.9, size=(100, 100))
 
-# 1. SIMULACIÓN DE DATOS (Vectorizada)
-inicio = time.time()
-# Generamos matriz float64 en memoria contigua
-mapa_termico = np.random.uniform(20.0, 45.0, (FILAS, COLUMNAS))
-fin = time.time()
+    # 2. Simular un fallo en el sistema de riego (Zona central seca)
+    # Slicing: [filas, columnas] -> Afectamos el centro
+    humedad_suelo[40:60, 40:60] = 0.05
+    print("⚠️  Alerta: Fallo de riego detectado en el sector central.")
 
-print(f"✅ Mapa generado en {fin - inicio:.4f} segundos.")
-print(f"   Memoria usada: {mapa_termico.nbytes / 1024 / 1024:.2f} MB")
+    # 3. Análisis con Máscaras Booleanas
+    # ¿Qué parcelas están en estado crítico (< 0.2)?
+    # Esto crea una matriz de True/False
+    mask_sequia = humedad_suelo < 0.2
 
-# 2. ANÁLISIS ESTADÍSTICO (Operaciones SIMD)
-promedio = np.mean(mapa_termico)
-maximo = np.max(mapa_termico)
-std_dev = np.std(mapa_termico)
+    # 4. Estadísticas
+    total_pixeles = humedad_suelo.size
+    total_sequia = np.sum(mask_sequia)  # Suma los True como 1
+    porcentaje_dano = (total_sequia / total_pixeles) * 100
 
-print("\n📊 ESTADÍSTICAS DEL TERRENO:")
-print(f"   - Temp Promedio: {promedio:.2f} C")
-print(f"   - Variabilidad:  {std_dev:.2f} C")
+    humedad_promedio = np.mean(humedad_suelo)
 
-# 3. DETECCIÓN DE ALERTAS (Masking)
-# Esto crea una mascara booleana instantanea
-umbral = 40.0
-mapa_alertas = mapa_termico > umbral
-pixeles_peligro = np.sum(mapa_alertas)
+    # 5. Reporte de Ingeniería
+    print("\n--- REPORTE DE ESTADO DEL LOTE ---")
+    print(f"Dimensiones: {humedad_suelo.shape} ({total_pixeles} m2)")
+    print(f"Humedad Promedio: {humedad_promedio:.2%}")
+    print(f"Área Crítica (Sequía): {total_sequia} m2")
+    print(f"Porcentaje de Daño: {porcentaje_dano:.2f}%")
 
-print(f"\n⚠️  REPORTE DE ALERTA (> {umbral} C):")
-print(f"   - Píxeles afectados: {pixeles_peligro:,}")
-print(f"   - Área crítica: {(pixeles_peligro/TOTAL_PIXELES)*100:.2f}%")
+    if porcentaje_dano > 10:
+        print("\n🚨 ACCIÓN REQUERIDA: ACTIVAR RIEGO DE EMERGENCIA 🚨")
+    else:
+        print("\n✅ Estado controlable.")
 
-# --- ZONA DE RETOS PARA EL ESTUDIANTE ---
-# Reto 1: Normalización (0-1)
-# Reto 2: Ubicar coordenada del máximo (argmax)
-# Reto 3: Imputación de errores (where)
+
+if __name__ == "__main__":
+    analizar_lote()

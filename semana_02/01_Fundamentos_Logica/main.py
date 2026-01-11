@@ -1,46 +1,56 @@
-import time
-
-print("\n--- 🟢 TALLER DE FUNDAMENTOS (Listas y Lógica) ---")
-
-# 1. DATOS SUCIOS
-# Recibimos esto de un sensor. Nota que hay 'None' y valores erróneos.
-sensores = [24.5, 25.1, None, 23.8, -100.0, 26.2]
-print(f"📡 Datos crudos: {sensores}")
-
-# 2. LIMPIEZA DE DATOS
-datos_limpios = []
-
-for lectura in sensores:
-    # Si es None, saltamos al siguiente
-    if lectura is None:
-        continue
-    
-    # Validamos rango físico (0 a 50 grados)
-    if 0 <= lectura <= 50:
-        datos_limpios.append(lectura)
-
-print(f"✅ Datos limpios: {datos_limpios}")
-
-# 3. CÁLCULO DE PROMEDIO
-promedio = sum(datos_limpios) / len(datos_limpios)
-print(f"📊 Promedio actual: {promedio:.2f}")
-
-# ==========================================
-# 🧠 ZONA DE RETOS
-# ==========================================
-print("\n--- 🔨 TUS EJERCICIOS ---")
-
-# RETO 1: Imprime cuántos datos tiene la lista 'datos_limpios' usando len().
-# Escribe tu código aquí:
+"""
+MÓDULO 1: Lógica Computacional y Validación de Datos
+Propósito: Demostrar el uso de lógica booleana defensiva (Short-Circuit Evaluation).
+"""
 
 
-# RETO 2: Crea un if que imprima "⚠️ ALERTA DE CALOR" si el promedio es mayor a 25.
-# Escribe tu código aquí:
+def validar_riego(humedad: float, temperatura: float, sistema_activo: bool) -> str:
+    """
+    Decide si activar el riego basado en lógica de sensores.
+
+    Reglas de Negocio:
+    1. Si el sistema está inactivo -> APAGADO (Critical Stop).
+    2. Si los datos son erróneos (fuera de rango) -> ERROR.
+    3. Si humedad < 30% Y temperatura > 25°C -> RIEGO.
+    """
+
+    # --- PASO 1: Guard Clause (Cláusula de Protección) ---
+    # Si el sistema está apagado, retornamos inmediatamente.
+    # Esto ahorra procesamiento (Short-circuit).
+    if not sistema_activo:
+        return "[SISTEMA]: Inactivo por mantenimiento."
+
+    # --- PASO 2: Validación de Integridad de Datos ---
+    # Un sensor roto puede enviar -999 o 2000. Validamos rangos físicos.
+    datos_invalidos = (humedad < 0 or humedad > 100) or (
+        temperatura < -50 or temperatura > 60
+    )
+
+    if datos_invalidos:
+        return f"[ALERTA]: Lectura de sensores corrupta (H:{humedad}, T:{temperatura})"
+
+    # --- PASO 3: Lógica de Negocio (Core Logic) ---
+    # Aplicamos la regla agronómica
+    necesita_agua = (humedad < 30) and (temperatura > 25)
+
+    if necesita_agua:
+        return f"[ACCIÓN]: 💧 Activando bombas (Humedad Crítica: {humedad}%)"
+    else:
+        return "[ESTADO]: ✅ Condiciones óptimas. Esperando."
 
 
-# RETO 3: Agrega el valor de 45.0 a la lista 'datos_limpios' usando append().
-# (Imprime la lista después para verificar que se agregó).
-# Escribe tu código aquí:
+# --- BLOQUE PRINCIPAL (Testing) ---
+if __name__ == "__main__":
+    print("--- INICIANDO DIAGNÓSTICO DE SENSORES ---\n")
 
+    # Caso 1: Todo normal
+    print(validar_riego(humedad=45, temperatura=22, sistema_activo=True))
 
-print("---------------------------------------------")
+    # Caso 2: Sequía extrema
+    print(validar_riego(humedad=20, temperatura=30, sistema_activo=True))
+
+    # Caso 3: Sensor roto (Humedad imposible)
+    print(validar_riego(humedad=150, temperatura=25, sistema_activo=True))
+
+    # Caso 4: Sistema apagado manualmente
+    print(validar_riego(humedad=10, temperatura=40, sistema_activo=False))

@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1768141433.0427 "/workspaces/curso-ia-agroindustria/semana_01/docs/slides.tex" "build/slides.pdf" "slides" 1768141433.59975 2
-  "/etc/texmf/web2c/texmf.cnf" 1768089231.96592 475 c0e671620eb5563b2130f56340a5fde8 ""
+["pdflatex"] 1768146077.56505 "/workspaces/curso-ia-agroindustria/semana_01/docs/slides.tex" "build/slides.pdf" "slides" 1768146078.15907 2
+  "/etc/texmf/web2c/texmf.cnf" 1768143895.37017 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr10.tfm" 1136768653 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmss10.tfm" 1136768653 1316 b636689f1933f24d1294acdf6041daaa ""
@@ -150,10 +150,10 @@
   "/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty" 1727642399 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1768089297 1979924 7b9b923b47ac8fa5ca65e8c9d8f90692 ""
-  "/workspaces/curso-ia-agroindustria/semana_01/docs/slides.tex" 1768141432.19362 7257 864e0ed50cf7edbaedd400d5950f93e4 ""
-  "build/slides.aux" 1768141433.04213 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "slides.tex" 1768141432.19362 7257 864e0ed50cf7edbaedd400d5950f93e4 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1768143953 1979966 d3bb2a43968f9ff658febc596a6b79ab ""
+  "/workspaces/curso-ia-agroindustria/semana_01/docs/slides.tex" 1768146076.73066 7261 03657c0660795a77247430e311cc8bea ""
+  "build/slides.aux" 1768146077.56448 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "slides.tex" 1768146076.73066 7261 03657c0660795a77247430e311cc8bea ""
   (generated)
   "build/slides.aux"
   "build/slides.log"

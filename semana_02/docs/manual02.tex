@@ -1,0 +1,237 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{fontspec} % Requiere XeLaTeX
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{marginnote}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% --- Ajuste de encabezado ---
+\setlength{\headheight}{28pt}
+
+% --- Geometría ---
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=4cm, marginparwidth=3cm}
+
+% --- Colores Institucionales y de Código ---
+\definecolor{primary}{RGB}{0, 85, 164}      % Azul Ingeniería
+\definecolor{accent}{RGB}{34, 139, 34}      % Verde Agro
+\definecolor{alert}{RGB}{204, 0, 0}         % Rojo Alerta
+\definecolor{codebg}{RGB}{245, 247, 250}
+
+% --- Cajas personalizadas ---
+\newtcolorbox{conceptbox}[1]{
+  colback=blue!5!white,
+  colframe=primary,
+  title=#1,
+  fonttitle=\bfseries,
+  boxrule=0.5mm,
+  arc=2mm,
+  shadow={2mm}{-2mm}{0mm}{black!20}
+}
+
+\newtcolorbox{agrobox}[1]{
+  colback=green!5!white,
+  colframe=accent,
+  title=#1,
+  fonttitle=\bfseries,
+  boxrule=0.5mm,
+  arc=2mm
+}
+
+\newtcolorbox{mathalert}[1]{
+  colback=red!5!white,
+  colframe=alert,
+  title=#1,
+  fonttitle=\bfseries,
+  boxrule=0.5mm,
+  arc=2mm
+}
+
+% --- Estilo de código Python ---
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{gray}\itshape,
+    keywordstyle=\color{primary}\bfseries,
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{accent},
+    basicstyle=\ttfamily\footnotesize, % Un poco más pequeño para que quepa bien
+    breaklines=true,
+    frame=l,
+    rulecolor=\color{primary},
+    numbers=left,
+    showstringspaces=false,
+    literate={"}{{\textquotedbl}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+}
+\lstset{style=pythonstyle}
+
+% --- Encabezado ---
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Ingeniería de Software I}}
+% Asegúrate de que logo_unal.png esté en la misma carpeta al compilar
+\rhead{\includegraphics[height=0.8cm]{logo_unal.png}}
+\rfoot{\thepage}
+
+\title{\includegraphics[width=4cm]{logo_unal.png}\\[1cm] \textbf{Fundamentos de Computación Científica}\\ Lógica Algorítmica y Vectorización para IA Agroindustrial}
+\author{Curso de IA Aplicada al Agro}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section*{Prefacio: El Ingeniero vs. El Programador}
+
+En la Semana 1 dominaste la terminal. Ahora, en la Semana 2, dejaremos de escribir ``scripts'' para empezar a construir \textbf{Ingeniería de Datos}.
+
+Python es el lenguaje estándar de la IA, no por su velocidad (es lento), sino por su capacidad de conectarse con librerías de alto rendimiento escritas en C, como \textbf{NumPy}.
+
+Al finalizar este módulo, entenderás:
+\begin{itemize}
+    \item La matemática detrás de las decisiones lógicas ($A \land B$).
+    \item Por qué los bucles \texttt{for} destruyen el rendimiento en Big Data.
+    \item Cómo procesar imágenes satelitales usando matrices (Tensores).
+\end{itemize}
+
+\newpage
+
+% ==========================================
+% CAPITULO 1
+% ==========================================
+\section{Capítulo I: Lógica Algorítmica y Complejidad}
+
+La programación es la automatización de la lógica matemática. Un ingeniero no solo escribe código que funciona; escribe código que \textit{escala}.
+
+\subsection{Variables y Tipos de Datos}
+En álgebra, $x$ es una incógnita. En computación, una variable es una \textbf{dirección de memoria}.
+
+\begin{lstlisting}[language=Python, caption={Tipos de datos en Agro-IA}]
+ph_suelo = 5.8          # float (Reales)
+id_sensor = 1024        # int (Enteros)
+zona = "Lote Norte"     # str (Cadenas)
+riego_activo = True     # bool (Lógica Binaria)
+\end{lstlisting}
+
+\subsection{Lógica Booleana (El cerebro de la IA)}
+Las decisiones se basan en tablas de verdad. Los operadores Python tienen equivalentes matemáticos exactos:
+
+\begin{itemize}
+    \item \texttt{and} $\leftrightarrow$ Conjunción ($A \land B$)
+    \item \texttt{or} $\leftrightarrow$ Disyunción ($A \lor B$)
+    \item \texttt{not} $\leftrightarrow$ Negación ($\neg A$)
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption={Lógica de Control de Riego}]
+# Regla: Regar SI (Humedad < 30%) Y (No está lloviendo)
+if (humedad < 30) and (not lloviendo):
+    activar_bombas()
+\end{lstlisting}
+
+\subsection{Complejidad Computacional (Big O)}
+\marginnote{\textbf{Nota de Ingeniería:} En Big Data, ignoramos las constantes. Nos importa la tendencia cuando $N \to \infty$.}
+
+Aquí es donde se separa al novato del experto. ¿Qué pasa si tienes que analizar 1 millón de plantas?
+
+\begin{mathalert}{El Peligro de los Bucles Anidados ($O(N^2)$)}
+Si tienes una lista de $N$ parcelas y usas un bucle dentro de otro bucle, el tiempo de ejecución crece cuadráticamente.
+$$ N = 10,000 \rightarrow \text{Operaciones} = 100,000,000 $$
+\textbf{Regla:} En Python para IA, evita los bucles \texttt{for} siempre que sea posible.
+\end{mathalert}
+
+\newpage
+
+% ==========================================
+% CAPITULO 2
+% ==========================================
+\section{Capítulo II: Estructuras de Datos y Memoria}
+
+\subsection{Listas vs. Arrays (La verdad oculta)}
+Una lista de Python \texttt{[1, 2, 3]} es flexible pero ineficiente. En la memoria RAM, es una colección de \textit{punteros} dispersos. El procesador pierde tiempo buscando cada dato.
+
+\subsection{NumPy: La base del Deep Learning}
+NumPy crea \textbf{Arrays}: bloques contiguos de memoria optimizada (como en C o Fortran). Esto permite operaciones SIMD (Single Instruction, Multiple Data).
+
+\begin{conceptbox}{Comparativa de Velocidad}
+Procesar 1 millón de datos:
+\begin{itemize}
+    \item \textbf{Python List:} $\approx$ 300 ms (Milisegundos)
+    \item \textbf{NumPy Array:} $\approx$ 5 ms
+\end{itemize}
+¡Es 60 veces más rápido! Fundamental para entrenar IAs.
+\end{conceptbox}
+
+\subsection{Vectorización y Broadcasting}
+En lugar de iterar por cada elemento, operamos sobre toda la matriz a la vez.
+
+\begin{lstlisting}[language=Python, caption={Vectorización: El estilo NumPy}]
+import numpy as np
+
+# Matriz 1000x1000 simulando humedad del terreno
+terreno = np.random.rand(1000, 1000)
+
+# PROBLEMA: Calibrar sensores sumando 0.1 a todo el terreno
+# FORMA INCORRECTA (Lenta - O(N^2)):
+# for i in rows: for j in cols: terreno[i][j] += 0.1
+
+# FORMA CORRECTA (Vectorizada - Instantánea):
+terreno_calibrado = terreno + 0.1
+\end{lstlisting}
+
+\begin{agrobox}{Caso de Uso Real: Imágenes Satelitales}
+Una imagen satelital no es más que una matriz de números (R, G, B, Infrarrojo).
+Detectar vegetación (NDVI) es simplemente una operación matricial:
+$$ NDVI = \frac{(NIR - RED)}{(NIR + RED)} $$
+Con NumPy, esta fórmula se aplica a millones de píxeles en milisegundos.
+\end{agrobox}
+
+\newpage
+
+% ==========================================
+% CAPITULO 3
+% ==========================================
+\section{Capítulo III: Taller Práctico - Simulación de Cultivos}
+
+Vamos a crear un sistema que simule el crecimiento de cultivos en una matriz, aplicando factores aleatorios (clima).
+
+\subsection{Requerimientos}
+Crear un script \texttt{simulacion.py} que:
+\begin{enumerate}
+    \item Genere un campo de $50 \times 50$ parcelas con salud inicial aleatoria (0.0 a 1.0).
+    \item Simule una "plaga" que reduce la salud en un 20\% en zonas aleatorias.
+    \item Calcule estadísticas finales (promedio, desviación estándar).
+\end{enumerate}
+
+\begin{lstlisting}[language=Python, caption={simulacion.py (Snippet)}]
+import numpy as np
+
+# 1. Crear campo (50x50)
+campo = np.random.uniform(0.5, 1.0, (50, 50))
+
+# 2. Simular Plaga (Máscara Booleana)
+# La plaga afecta al 10% del campo aleatoriamente
+zona_plaga = np.random.rand(50, 50) < 0.1
+campo[zona_plaga] = campo[zona_plaga] - 0.2
+
+# 3. Reporte
+print(f"Salud Promedio: {np.mean(campo):.2f}")
+print(f"Parcelas Críticas (<0.4): {np.sum(campo < 0.4)}")
+\end{lstlisting}
+
+\section*{Próximos Pasos}
+En la Semana 3, conectaremos esto con el mundo real:
+\begin{itemize}
+    \item Leer archivos CSV gigantes con \textbf{Pandas}.
+    \item Limpieza de datos (Data Cleaning).
+    \item Visualización científica con \textbf{Matplotlib}.
+\end{itemize}
+
+\end{document}
