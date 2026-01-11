@@ -19,8 +19,8 @@ jobs:
           scheme: full
           run: |
             # Semana 01
-            latexmk -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/manual01.tex
-            latexmk -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/slides.tex
+            latexmk -cd -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/manual01.tex
+            latexmk -cd -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/slides.tex
 
       - name: Subir PDFs resultantes
         uses: actions/upload-artifact@v4
