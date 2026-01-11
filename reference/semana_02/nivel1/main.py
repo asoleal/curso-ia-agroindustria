@@ -28,8 +28,7 @@ def validar_riego(humedad: float, temperatura: float, sistema_activo: bool) -> s
         return f"[ALERTA]: Lectura de sensores corrupta (H:{humedad}, T:{temperatura})"
 
     # --- PASO 2.5: Seguridad Crítica (RETO RESUELTO) ---
-    # Esta regla tiene prioridad sobre el riego.
-    # Si hace tanto calor, regar no sirve; hay que alertar fuego.
+    # Prioridad Alta: Si hace más de 50°C, hay riesgo de incendio.
     if temperatura > 50:
         return "[ALERTA CRÍTICA]: 🔥 Peligro de incendio detectado."
 

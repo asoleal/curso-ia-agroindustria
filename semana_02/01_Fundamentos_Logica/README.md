@@ -1,27 +1,49 @@
-# Módulo 1: Lógica Computacional y Diseño Defensivo 🛡️
+# Módulo 1: Lógica Computacional y Validación de Datos 🛡️
 
-> **Concepto Clave:** "Fail Fast" (Fallar Rápido) y Validación de Datos.
-
-## 📖 Descripción Técnica
-En la ingeniería de IA, los datos nunca son perfectos. Los sensores fallan, las APIs se caen y los usuarios introducen valores erróneos. Este módulo demuestra cómo escribir **Lógica Defensiva**.
-
-No usamos `if` simplemente para bifurcar caminos, lo usamos para **proteger la integridad del sistema** antes de realizar cálculos costosos.
-
-### Conceptos Tratados
-1.  **Short-Circuit Evaluation:** Python deja de evaluar una condición tan pronto sabe el resultado final.
-    * `False and (Calculo_Pesado)` -> Python ni siquiera toca el cálculo pesado.
-2.  **Guard Clauses (Cláusulas de Guardia):** Validar y retornar temprano en lugar de anidar múltiples `if` (Hell's Nesting).
-3.  **Álgebra Booleana:** Uso correcto de `not`, `and`, `or` para modelar reglas de negocio agrícolas.
+> **¿El problema?** En el mundo real, los sensores mienten. Un sensor de humedad puede reportar `-500%` si se rompe. Si tu código no detecta esto, tu IA tomará decisiones desastrosas (como inundar un cultivo).
+> **La solución:** Programación Defensiva.
 
 ---
 
-## 🛠️ El Código (`main.py`)
+## 🏆 ¿Qué vas a lograr?
+Al finalizar este laboratorio, dejarás de usar `if/else` básicos para escribir **Software de Ingeniería**:
+1.  **Validar datos sucios** antes de que rompan tu sistema ("Sanitización").
+2.  **Aprender "Guard Clauses":** Una técnica para evitar el código "spaghetti" (anidación excesiva).
+3.  **Entender el "Cortocircuito":** Cómo hacer que Python sea eficiente dejando de calcular si ya sabe la respuesta.
 
-El script implementa un validador para un **Sistema de Riego Autónomo**.
+---
 
-### Estructura de la Función
+## 🧠 Conceptos Clave (Antes de empezar)
+
+### 1. Cláusulas de Guardia (Guard Clauses)
+En lugar de encerrar todo tu código en un `if` gigante, verificamos los errores primero y "retornamos" inmediatamente.
+
+**❌ Código Novato (Nested Ifs):**
 ```python
-def validar_riego(humedad, temperatura, sistema_activo):
-    # 1. Check de Sistema (Guard Clause)
-    # 2. Validación de Rangos Físicos (Integridad)
-    # 3. Lógica de Negocio (Algoritmo de Riego)
+if sistema_activo:
+    if humedad > 0:
+        if humedad < 100:
+            # Hacer cálculos...
+```
+
+## 🧪 Laboratorio: Tu Misión
+
+El script `main.py` simula un cerebro digital para un sistema de riego. Tu trabajo es ponerlo a prueba y entender cómo se protege a sí mismo.
+
+### Paso 1: Ejecución Base
+Corre el script tal como está para ver el diagnóstico de 4 casos predefinidos.
+```bash
+python main.py
+```
+### Paso 2: "Chaos Monkey" (Rompe el sistema)
+Abre el archivo `main.py` con tu editor de código. Ve al final, a la sección `if __name__ == "__main__":` y crea tus propios casos de prueba:
+
+1.  **Simula un sensor loco:** Llama a la función con `humedad = 500`. ¿Qué mensaje obtienes?
+2.  **Simula un fallo eléctrico:** Llama a la función con `sistema_activo = False`.
+3.  **Prueba el límite:** ¿Qué pasa si la humedad es exactamente `30`? (¿Riega o no riega?).
+
+### Paso 3: Reto de Código
+Modifica la función `validar_riego` dentro de `main.py` para agregar una **nueva regla de seguridad**:
+
+* Si la `temperatura` es mayor a `50°C`, el sistema debe retornar una `[ALERTA CRÍTICA]: Peligro de incendio`, sin importar la humedad.
+* *Pista:* Debes agregar esta "Guard Clause" antes de la lógica de riego.
