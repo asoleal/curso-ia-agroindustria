@@ -1,0 +1,178 @@
+\documentclass[11pt, aspectratio=169]{beamer}
+
+% --- PAQUETES DE COLOR Y TEMA ---
+\usepackage{xcolor}
+\usetheme{Madrid}
+
+% Definimos el color antes de aplicarlo
+\definecolor{AgroVerde}{RGB}{34, 100, 34}
+\usecolortheme[named=AgroVerde]{structure}
+
+% --- PAQUETES DE IDIOMA ---
+\usepackage[utf8]{inputenc} % Para compatibilidad con pdflatex
+\usepackage[T1]{fontenc}    % Codificación de fuente estándar
+\usepackage[spanish, es-noquoting]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+
+% --- COMENTAMOS LAS FUENTES PERSONALIZADAS PARA EVITAR ERRORES ---
+% Si quieres usarlas, asegúrate de que estén instaladas en tu sistema
+% y de usar XeLaTeX. Por ahora, usamos las de defecto de Beamer.
+% \usepackage{fontspec}
+% \setmainfont{TeX Gyre Pagella}
+% \setsansfont{DejaVu Sans}
+
+% --- GRÁFICOS Y CÓDIGO ---
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{listings}
+\pgfplotsset{compat=1.17}
+\usetikzlibrary{arrows.meta, positioning, calc, babel}
+
+% Estilo de código Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\tiny,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{orange},
+    backgroundcolor=\color{gray!5},
+    frame=single,
+    rulecolor=\color{gray!30},
+    breaklines=true,
+    showstringspaces=false
+}
+
+% --- METADATOS ---
+\title{\textbf{Modelado Predictivo en Agroindustria}}
+\subtitle{De la Química del Suelo a la Predicción de Cosechas}
+\author{Curso de IA Aplicada al Agro}
+\date{Semana 04}
+\institute{AgroFuture AI Training}
+
+\begin{document}
+
+\frame{\titlepage}
+
+% --- DIAPOSITIVA 1 ---
+\begin{frame}{¿Por qué predecir?}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{block}{El dato es el nuevo fertilizante}
+            \begin{itemize}
+                \item \textbf{Descriptivo}: ¿Cuánto cosechamos? \\ \textit{\small (Análisis histórico)}
+                \item \textbf{Predictivo}: ¿Cuánto cosecharíamos si...? \\ \textit{\small (Modelos de IA)}
+            \end{itemize}
+        \end{block}
+
+        \column{0.5\textwidth}
+        \begin{exampleblock}{Caso: Finca ``La Esperanza''}
+            Gasto en fertilizantes $\uparrow$ 20\%, pero producción estancada.\\
+            \textbf{Meta}: Encontrar la dosis óptima de nitrógeno (N).
+        \end{exampleblock}
+    \end{columns}
+\end{frame}
+
+% --- DIAPOSITIVA 2 ---
+\begin{frame}{Regresión Lineal: La Hipótesis}
+    \begin{center}
+        \Large $h_\theta(x) = \theta_0 + \theta_1 x$
+    \end{center}
+    \vspace{0.3cm}
+    \begin{columns}[T]
+        \column{0.5\textwidth}
+        \textbf{$\theta_0$ (Intercepto)} \\
+        Rendimiento base esperado si el nivel de nitrógeno es cero.
+
+        \column{0.5\textwidth}
+        \textbf{$\theta_1$ (Pendiente)} \\
+        El ``peso'' del nitrógeno: Toneladas extra por cada unidad de ppm.
+    \end{columns}
+    \vspace{0.4cm}
+    \begin{alertblock}{Misión del Algoritmo}
+        Ajustar los parámetros $\theta$ para que la línea minimice la distancia a los puntos reales registrados en el campo.
+    \end{alertblock}
+\end{frame}
+
+% --- DIAPOSITIVA 3 ---
+\begin{frame}{Visualización del Error}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                axis lines=left, xlabel={Nitrógeno (ppm)}, ylabel={Rendimiento (Ton/Ha)},
+                ymin=0, ymax=5, xmin=0, xmax=10, grid=major, width=9cm, height=5.5cm,
+                grid style={dashed, gray!30}
+            ]
+                \addplot[only marks, mark=*, color=black] coordinates {
+                    (1, 1.2) (2, 1.8) (3, 2.5) (4, 3.0) (5, 3.2) (6, 4.1) (8, 4.5)
+                };
+                \addplot[domain=0:9, color=AgroVerde, ultra thick] {0.8 + 0.45*x};
+                \draw[red, thick, dashed] (axis cs:4,3.0) -- (axis cs:4,2.6);
+                \node[red, right] at (axis cs:4,2.8) {\footnotesize Residuo (Error)};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% --- DIAPOSITIVA 4 ---
+\begin{frame}{Descenso del Gradiente}
+    \textbf{¿Cómo aprende el modelo?}
+    \vspace{0.3cm}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{enumerate}
+            \item Calcula el error actual.
+            \item Determina la dirección de descenso (\textbf{Gradiente}).
+            \item Actualiza los pesos con un paso ($\alpha$).
+        \end{enumerate}
+        \begin{block}{Regla de Oro}
+            \[ \theta_j := \theta_j - \alpha \frac{\partial J}{\partial \theta_j} \]
+        \end{block}
+        \column{0.4\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.5]
+            \draw[->] (0,4) .. controls (1,0) and (3,0) .. (4,4);
+            \filldraw[red] (0.5,2.5) circle (4pt);
+            \draw[->, thick] (0.5,2.5) -- (1.2,1.2);
+            \node at (2,-0.5) {Mínimo Error};
+        \end{tikzpicture}
+    \end{columns}
+\end{frame}
+
+
+
+% --- DIAPOSITIVA 5 ---
+\begin{frame}[fragile]{Implementación Profesional}
+\begin{lstlisting}
+from sklearn.linear_model import LinearRegression
+
+# Entrenar modelo con datos de campo
+modelo = LinearRegression()
+modelo.fit(X_entrenamiento, y_real)
+
+# Obtener la precision del modelo
+r2 = modelo.score(X_prueba, y_real_prueba)
+print(f"Confiabilidad del modelo: {r2:.2%}")
+
+# Predecir cosecha para un nuevo lote
+pred = modelo.predict([[3.5]])
+\end{lstlisting}
+    \begin{exampleblock}{Interpretación}
+        Si el $R^2$ es 0.95, significa que el nitrógeno explica el 95\% de la variación en tu cosecha. Es un modelo excelente para decidir la compra de insumos.
+    \end{exampleblock}
+\end{frame}
+
+% --- DIAPOSITIVA 6 ---
+\begin{frame}{Conclusiones y Futuro}
+    \begin{itemize}
+        \item \textbf{Criterio Humano}: Ningún modelo sustituye al agrónomo. Cuidado con la extrapolación.
+        \item \textbf{Ética}: Modelos precisos evitan el uso excesivo de fertilizantes (menor impacto ambiental).
+        \item \textbf{Próxima Semana}: ¿Qué pasa si sumamos la lluvia y el pH del suelo? (\textbf{Regresión Múltiple}).
+    \end{itemize}
+    \vfill
+    \centering
+    \Large \textbf{¡Gracias por su atención!} \\
+    \normalsize Espacio para preguntas y respuestas.
+\end{frame}
+
+\end{document}
