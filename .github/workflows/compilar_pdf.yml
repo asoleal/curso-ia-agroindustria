@@ -19,7 +19,7 @@ jobs:
           scheme: full
           run: |
             # Semana 01
-            latexmk -cd -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/manual_completo.tex
+            latexmk -cd -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/manual/manual_completo.tex
             latexmk -cd -xelatex -interaction=nonstopmode -file-line-error semana_01/docs/slides/slides.tex
 
       - name: Subir PDFs resultantes
