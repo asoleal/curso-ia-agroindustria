@@ -1,0 +1,264 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{fontspec}
+\usepackage[spanish, es-tabla]{babel} % es-tabla para que diga "Tabla" en vez de "Cuadro"
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{float} % Para forzar posición de imágenes con [H]
+
+% --- Fuentes (Requiere compilar con XeLaTeX) ---
+% Si no tienes las fuentes instaladas, puedes comentar estas líneas y usar las default
+\setmainfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+
+% --- Colores Corporativos Agro ---
+\definecolor{sqlblue}{RGB}{0, 102, 204}
+\definecolor{agrogreen}{RGB}{34, 139, 34}
+\definecolor{earthbrown}{RGB}{139, 69, 19}
+\definecolor{danger}{RGB}{204, 0, 0}
+\definecolor{codebg}{RGB}{245, 247, 250}
+
+% --- Configuración de Hipervínculos ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=sqlblue,
+    filecolor=magenta,
+    urlcolor=agrogreen,
+}
+
+% --- Estilo de Código SQL y Bash ---
+\lstdefinestyle{estilo_codigo}{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{sqlblue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{agrogreen},
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    stepnumber=1,
+    frame=single,
+    rulecolor=\color{lightgray},
+    breaklines=true,
+    showstringspaces=false,
+    captionpos=b
+}
+\lstset{style=estilo_codigo}
+
+% --- Cajas Personalizadas ---
+\newtcolorbox{agrobox}[1]{
+  colback=green!5!white, colframe=agrogreen,
+  title=🌱 #1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm, drop shadow
+}
+
+\newtcolorbox{conceptbox}[1]{
+  colback=blue!5!white, colframe=sqlblue,
+  title=🧠 Concepto Clave: #1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm, drop shadow
+}
+
+\newtcolorbox{warningbox}[1]{
+  colback=red!5!white, colframe=danger,
+  title=⚠️ Advertencia: #1, fonttitle=\bfseries,
+  boxrule=0.5mm, arc=2mm
+}
+
+% --- Encabezado y Pie de Página ---
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{Ingeniería de Datos Agro}}
+\rhead{Semana 04: Persistencia de Datos}
+\rfoot{Página \thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+% --- Título ---
+\title{
+    \vspace{-2cm}
+    \begin{tcolorbox}[colback=agrogreen!10!white,colframe=agrogreen,arc=0mm,boxrule=0pt]
+        \centering
+        \huge \textbf{SQL Moderno para Ingeniería Agroindustrial}\\
+        \Large Integración con Bash, Python y Pandas
+    \end{tcolorbox}
+}
+\author{Curso de IA Aplicada al Agro}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section*{Introducción: El Flujo de Datos}
+
+En la Semana 03 aprendiste a limpiar datos en memoria con Pandas. Pero ¿y si los datos son demasiado grandes? ¿O si necesitas acceder a ellos desde múltiples scripts simultáneamente?
+
+La respuesta es: ``almacénalos en una base de datos''.
+
+\begin{figure}[H]
+    \centering
+    % Aquí podrías incluir un diagrama real si tienes el archivo .png
+    % \includegraphics[width=0.8\textwidth]{pipeline.png}
+    \begin{tcolorbox}[colback=white, colframe=gray, title=Arquitectura del Pipeline, halign=center]
+        \textbf{Sensores (CSV)} $\xrightarrow{\text{Bash}}$ \textbf{SQLite (DB)} $\xrightarrow{\text{Python}}$ \textbf{Pandas (DF)}
+    \end{tcolorbox}
+    \caption{Flujo de datos desde la recolección hasta el análisis.}
+\end{figure}
+
+SQL (Structured Query Language) es el estándar porque:
+\begin{itemize}
+    \item Es \textbf{declarativo}: describes \textit{qué} quieres, no \textit{cómo} hacerlo.
+    \item Es \textbf{eficiente}: filtra millones de registros antes de cargarlos en la RAM de Python.
+    \item Es \textbf{universal}: lo que aprendas aquí sirve para PostgreSQL, BigQuery o Spark SQL.
+\end{itemize}
+
+\newpage
+
+\section{Capítulo I: Primeros Pasos con SQLite}
+
+SQLite es una base de datos ligera, sin servidor, ideal para entornos frugales (Raspberry Pi, laptops rurales) donde la conectividad es limitada.
+
+\subsection{Crear y Poblar una Tabla}
+Imagina una tabla que registra la actividad de sensores de humedad en diferentes lotes de café.
+
+
+
+\begin{lstlisting}[language=SQL, caption=DDL para crear la tabla]
+-- Crear tabla de sensores
+CREATE TABLE sensores (
+    id INTEGER PRIMARY KEY,
+    zona TEXT NOT NULL,
+    fecha DATE,
+    temperatura REAL,
+    humedad REAL
+);
+
+-- Insertar datos manuales (solo para prueba)
+INSERT INTO sensores (zona, fecha, temperatura, humedad)
+VALUES ('Norte', '2026-01-10', 24.5, 78.2);
+\end{lstlisting}
+
+\subsection{Consultas Básicas (Queries)}
+\begin{lstlisting}[language=SQL, caption=Consultas de exploración]
+-- 1. Ver todos los registros
+SELECT * FROM sensores;
+
+-- 2. Filtrar zonas críticas (Humedad alta = riesgo de hongos)
+SELECT zona, fecha
+FROM sensores
+WHERE humedad > 80;
+
+-- 3. Ordenar por temperatura
+SELECT * FROM sensores ORDER BY temperatura DESC;
+\end{lstlisting}
+
+\begin{agrobox}{Caso de Uso: Alerta de Roya}
+La consulta número 2 es vital. Si la humedad supera el 80\% y la temperatura está entre 20-25°C, las condiciones son ideales para la roya del café. SQL nos permite detectar esto en milisegundos.
+\end{agrobox}
+
+\newpage
+
+\section{Capítulo II: Ingesta Masiva desde Bash}
+
+Como ingenieros de datos, no insertamos datos uno por uno. Automatizamos la ingesta de archivos CSV generados por los dataloggers.
+
+\subsection{Importar CSV a SQLite}
+Supón que tienes \texttt{sensores\_2026.csv} con miles de registros.
+
+\begin{lstlisting}[language=bash, caption=Script de Bash para Ingesta]
+# Comando en terminal (Bash)
+# .mode csv le dice a SQLite que espere comas
+# .import archivo tabla
+sqlite3 finca.db << EOF
+.mode csv
+.import sensores_2026.csv sensores
+EOF
+\end{lstlisting}
+
+\begin{warningbox}{Integridad de Datos}
+Asegúrate de que la primera fila del CSV (encabezados) coincida con los nombres de las columnas en la tabla, o usa la opción \texttt{--skip 1} si vas a mapear columnas manualmente.
+\end{warningbox}
+
+\subsection{Exportar Resultados a CSV}
+Después de procesar los datos, el agrónomo necesita un Excel.
+
+\begin{lstlisting}[language=bash]
+sqlite3 finca.db << EOF
+.headers on
+.mode csv
+.output reporte_sequia.csv
+SELECT zona, AVG(humedad) as prom_hum
+FROM sensores
+GROUP BY zona
+HAVING prom_hum < 40;
+EOF
+\end{lstlisting}
+
+\newpage
+
+\section{Capítulo III: SQL + Python = Poder Total}
+
+Pandas delega el trabajo pesado a SQL y se encarga del análisis fino y la visualización.
+
+\subsection{Conectar y Consultar}
+\begin{lstlisting}[language=Python, caption=Python leyendo SQL]
+import sqlite3
+import pandas as pd
+
+# 1. Conexión a la base de datos (archivo local)
+conn = sqlite3.connect('finca.db')
+
+# 2. Ejecutar consulta optimizada
+# Traemos SOLO los datos necesarios, no toda la base
+query = '''
+    SELECT zona, AVG(temperatura) as temp_prom
+    FROM sensores
+    WHERE fecha >= '2026-01-01'
+    GROUP BY zona
+'''
+
+df = pd.read_sql(query, conn)
+
+print("--- Promedios por Zona ---")
+print(df)
+
+conn.close()
+\end{lstlisting}
+
+\begin{conceptbox}{Eficiencia de Memoria}
+Filtrar en SQL (\texttt{WHERE}) es 10x más eficiente que cargar todo el CSV en Pandas y filtrar después (\texttt{df[df['col'] > x]}).
+\end{conceptbox}
+
+\newpage
+
+\section{Capítulo IV: Ética y Gobernanza}
+
+Una base de datos no es neutral. Refleja decisiones de diseño que impactan a las personas.
+
+\begin{itemize}
+    \item \textbf{¿Qué se mide?} Si solo medimos producción y no salud del suelo, optimizaremos la explotación a corto plazo.
+    \item \textbf{¿Quién accede?} El pequeño agricultor debe ser dueño de sus métricas, no solo la empresa que vende los insumos.
+\end{itemize}
+
+\begin{agrobox}{Soberanía Tecnológica}
+En contextos rurales, evita depender 100\% de la nube. SQLite permite mantener los datos \textbf{locales, controlables y auditables} incluso si se corta el internet satelital.
+\end{agrobox}
+
+\section*{🏆 Reto Final: Monitor de Cultivos}
+
+\begin{enumerate}
+\item Ejecuta \texttt{generar\_sensores.py} para crear \texttt{datos\_crudos.csv}.
+\item Crea la base de datos \texttt{finca.db} y la tabla \texttt{lecturas} usando Bash.
+\item Escribe una consulta SQL que identifique "Días Críticos":
+    * Humedad < 30\% (Estrés hídrico)
+    * **O** Temperatura > 35°C (Golpe de calor)
+\item Carga esos datos en Python y genera un gráfico de barras.
+\item Exporta los IDs de los lotes afectados a \texttt{alertas.txt}.
+\end{enumerate}
+\end{document}

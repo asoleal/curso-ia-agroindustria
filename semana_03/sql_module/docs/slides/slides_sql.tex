@@ -1,0 +1,237 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+% --- Paquetes ---
+\usepackage[spanish]{babel}
+\usepackage{fontspec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+
+% --- Tema y Colores ---
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Definición de colores del Manual
+\definecolor{sqlblue}{RGB}{0, 102, 204}
+\definecolor{agrogreen}{RGB}{34, 139, 34}
+\definecolor{earthbrown}{RGB}{139, 69, 19}
+\definecolor{codebg}{RGB}{245, 247, 250}
+
+% Personalización de Beamer con colores Agro
+\setbeamercolor{structure}{fg=agrogreen}
+\setbeamercolor{frametitle}{bg=agrogreen, fg=white}
+\setbeamercolor{title}{bg=agrogreen, fg=white}
+\setbeamercolor{block title}{bg=sqlblue, fg=white}
+\setbeamercolor{alerted text}{fg=earthbrown}
+
+% --- Fuentes (Para compilar con XeLaTeX) ---
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+
+% --- Configuración de Código ---
+\lstdefinestyle{slidecode}{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{sqlblue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{agrogreen},
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    frame=single,
+    breaklines=true,
+    showstringspaces=false
+}
+\lstset{style=slidecode}
+
+% --- Metadatos ---
+\title{SQL Moderno para Ingeniería Agroindustrial}
+\subtitle{Semana 04: Integración Bash + SQL + Python}
+\author{Ingeniería de Datos}
+\date{\today}
+
+\begin{document}
+
+% -------------------------------------------------------------------
+% SLIDE 1: PORTADA
+% -------------------------------------------------------------------
+\begin{frame}
+    \titlepage
+    \begin{center}
+        \footnotesize \textit{``Los datos son el fertilizante de la agricultura moderna.''}
+    \end{center}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 2: INTRODUCCIÓN
+% -------------------------------------------------------------------
+\begin{frame}{¿Por qué SQL en 2026?}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{El problema con los CSV/Excel:}
+        \begin{itemize}
+            \item Se cargan completos en RAM.
+            \item Difícil cruzar información (VLOOKUP es lento).
+            \item Sin control de tipos de datos.
+        \end{itemize}
+
+        \column{0.5\textwidth}
+        \textbf{La solución SQL:}
+        \begin{itemize}
+            \item \textbf{Eficiente:} Procesa en disco, no en RAM.
+            \item \textbf{Relacional:} Une tablas complejas fácilmente.
+            \item \textbf{Estándar:} Funciona igual en una Raspberry Pi que en la Nube.
+        \end{itemize}
+    \end{columns}
+
+    \vspace{1cm}
+    \begin{alertblock}{En el Agro}
+        Los sensores generan datos 24/7. SQL es el silo donde guardamos esa cosecha digital.
+    \end{alertblock}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 3: ARQUITECTURA (VISUAL)
+% -------------------------------------------------------------------
+\begin{frame}{El Pipeline de Datos}
+    \centering
+
+    \begin{tikzpicture}[node distance=2cm, auto,
+        block/.style={rectangle, draw, fill=white, text width=2.5cm, align=center, rounded corners, minimum height=1cm},
+        arrow/.style={-Stealth, thick, color=agrogreen}
+    ]
+        % Nodos
+        \node[block, fill=gray!10] (raw) {\textbf{Sensores}\\(Archivos CSV)};
+        \node[block, fill=sqlblue!10, right=of raw] (db) {\textbf{SQLite}\\(Base de Datos)};
+        \node[block, fill=agrogreen!10, right=of db] (py) {\textbf{Python}\\(Análisis/IA)};
+
+        % Flechas
+        \draw[arrow] (raw) -- node[above, font=\tiny] {\texttt{BASH (.import)}} (db);
+        \draw[arrow] (db) -- node[above, font=\tiny] {\texttt{SQL (SELECT)}} (py);
+
+    \end{tikzpicture}
+
+    \vspace{1cm}
+    \begin{itemize}
+        \item \textbf{Bash:} El cargador rápido (Ingesta).
+        \item \textbf{SQL:} El almacén ordenado (Persistencia).
+        \item \textbf{Python:} El cerebro analítico (Insights).
+    \end{itemize}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 4: CAPÍTULO I - SQL BÁSICO
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Capítulo I: Estructurando el Campo}
+    Antes de sembrar datos, debemos preparar la tierra (Crear Tablas).
+
+
+
+    \begin{lstlisting}[language=SQL, title={DDL - Data Definition Language}]
+-- Crear la bitácora de sensores
+CREATE TABLE sensores (
+    id INTEGER PRIMARY KEY,
+    zona TEXT NOT NULL,      -- Ej: 'Lote Norte'
+    fecha DATETIME,
+    temperatura REAL,        -- Grados Celsius
+    humedad REAL             -- Porcentaje %
+);
+    \end{lstlisting}
+
+    \pause
+    \vspace{0.5cm}
+    \textbf{Consultando datos críticos:}
+    \begin{lstlisting}[language=SQL]
+SELECT zona, fecha
+FROM sensores
+WHERE humedad > 80 AND temperatura > 25;
+-- Esto detecta condiciones ideales para hongos
+    \end{lstlisting}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 5: CAPÍTULO II - BASH Y CARGA MASIVA
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Capítulo II: Ingesta Masiva con Bash}
+    \textbf{Situación:} Tienes 50 archivos CSV de sensores. No vas a hacer \texttt{INSERT} manual.
+
+    Usamos \texttt{sqlite3} en la terminal:
+
+    \begin{block}{Comando de Terminal (ETL Express)}
+    \begin{lstlisting}[language=bash]
+# 1. Definir modo CSV
+# 2. Importar archivo -> tabla
+sqlite3 finca.db << EOF
+.mode csv
+.import datos_crudos.csv sensores
+EOF
+    \end{lstlisting}
+    \end{block}
+
+    \vspace{0.2cm}
+    \small \textit{*Esto es 100 veces más rápido que un bucle for en Python.}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 6: CAPÍTULO III - PYTHON
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Capítulo III: Conexión con Pandas}
+    Una vez los datos están en SQL, Python solo trae lo necesario.
+
+
+
+    \begin{lstlisting}[language=Python]
+import sqlite3
+import pandas as pd
+
+conn = sqlite3.connect('finca.db')
+
+# BUENA PRÁCTICA: Filtrar en SQL, no en Pandas
+query = """
+    SELECT zona, AVG(temperatura) as media
+    FROM sensores
+    WHERE fecha >= '2024-01-01'
+    GROUP BY zona
+"""
+
+df = pd.read_sql(query, conn)
+print(df)
+    \end{lstlisting}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 7: ÉTICA Y SOBERANÍA
+% -------------------------------------------------------------------
+\begin{frame}{Ética: Soberanía de Datos}
+    \begin{alertblock}{¿Dónde viven los datos?}
+        Si usamos Google Sheets o AWS, dependemos de internet y corporaciones extranjeras.
+    \end{alertblock}
+
+    \vspace{0.5cm}
+    \textbf{Ventajas de SQLite en el Agro:}
+    \begin{enumerate}
+        \item \textbf{Local:} Funciona `` Offline'' en la finca.
+        \item \textbf{Propiedad:} El archivo `.db` es fácil de copiar y respaldar.
+        \item \textbf{Auditabilidad:} El agricultor puede ver qué se registra.
+    \end{enumerate}
+\end{frame}
+
+% -------------------------------------------------------------------
+% SLIDE 8: RETO FINAL
+% -------------------------------------------------------------------
+\begin{frame}{🏆 Taller: Monitor de Cultivos}
+    \textbf{Objetivo:} Construir el Pipeline completo.
+
+    \begin{enumerate}
+        \item \textbf{Generar Caos:} Ejecuta \texttt{generar\_sensores.py} para crear datos sucios.
+        \item \textbf{Ingesta (Bash):} Crea la DB e importa el CSV automáticamente.
+        \item \textbf{Lógica (SQL):} Encuentra los "Días de Estrés Hídrico" (Humedad < 30\%).
+        \item \textbf{Reporte (Python):} Grafica los lotes más afectados.
+    \end{enumerate}
+
+    \vspace{1cm}
+    \centering
+    \textbf{¡Manos a la obra!} 🚀
+\end{frame}
+
+\end{document}
