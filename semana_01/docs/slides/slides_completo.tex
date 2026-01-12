@@ -1,0 +1,730 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+% =====================================================
+% PAQUETES Y CONFIGURACIÓN
+% =====================================================
+\usepackage{fontspec}
+\usepackage[spanish, es-tabla, es-noquoting]{babel}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{tcolorbox}
+
+% =====================================================
+% TEMA Y COLORES
+% =====================================================
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Colores personalizados
+\definecolor{primary}{RGB}{0, 51, 102}
+\definecolor{accent}{RGB}{46, 139, 87}
+\definecolor{danger}{RGB}{180, 0, 0}
+\definecolor{terminalbg}{RGB}{28, 28, 28}
+\definecolor{terminalfg}{RGB}{135, 255, 0}
+
+% Colores del tema
+\setbeamercolor{palette primary}{bg=primary, fg=white}
+\setbeamercolor{palette secondary}{bg=accent, fg=white}
+\setbeamercolor{palette tertiary}{bg=white, fg=primary}
+\setbeamercolor{alerted text}{fg=danger}
+\setbeamercolor{block title}{bg=accent, fg=white}
+\setbeamercolor{block body}{bg=accent!10, fg=black}
+
+% =====================================================
+% ESTILO DE CÓDIGO
+% =====================================================
+\lstdefinestyle{bashstyle}{
+  backgroundcolor=\color{terminalbg},
+  basicstyle=\ttfamily\tiny\color{terminalfg},
+  breaklines=true,
+  language=bash,
+  showstringspaces=false,
+  keywordstyle=\color{cyan},
+  commentstyle=\color{gray!70}\itshape,
+  belowskip=0pt,
+  aboveskip=0pt
+}
+
+% =====================================================
+% METADATOS
+% =====================================================
+\title{\textbf{Ingeniería de IA I}}
+\subtitle{Fundamentos de Ciencia de Datos:\\
+Terminal, Git, Python y Docker}
+\author{AgroFuture AI Training}
+\date{Enero 2026}
+\institute{Departamento de Ingeniería \\ Valle del Cauca, Colombia}
+
+\begin{document}
+
+% =====================================================
+% PORTADA
+% =====================================================
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% =====================================================
+% TABLA DE CONTENIDOS
+% =====================================================
+\begin{frame}{Índice}
+  \tableofcontents
+\end{frame}
+
+% =====================================================
+% SECCIÓN 1: INTRODUCCIÓN
+% =====================================================
+\section{Introducción: ¿Por Qué Estas Herramientas?}
+
+\begin{frame}{Realidad del Científico de Datos}
+  \centering
+  \begin{tikzpicture}[scale=1.5]
+    \draw[fill=accent!20] (0,0) rectangle (2,3);
+    \node at (1, 2.5) {\small 3 horas};
+    \node at (1, 2.0) {Limpieza};
+
+    \draw[fill=accent!40] (2.2,0) rectangle (4.2,2);
+    \node at (3.2, 1.5) {\small 2 horas};
+    \node at (3.2, 1.0) {Automatización};
+
+    \draw[fill=accent!60] (4.4,0) rectangle (6.4,1);
+    \node at (5.4, 0.5) {\small 1 hora};
+    \node at (5.4, 0.0) {Modelos};
+  \end{tikzpicture}
+
+  \vspace{0.5cm}
+  {\large \textbf{Por cada hora entrenando modelos:}}
+  \begin{itemize}
+    \item 3 horas de limpieza y validación de datos
+    \item 2 horas de automatización y scripting
+    \item 1 hora de documentación y versionado
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Principios Fundamentales}
+  \begin{block}{Reproducibilidad}
+    Un modelo que no puede reproducirse no es ciencia: es magia.
+  \end{block}
+
+  \vspace{1cm}
+
+  \begin{alertblock}{¿Qué aprenderemos?}
+    \begin{enumerate}
+      \item \textbf{Terminal Linux}: navegar, procesar datos
+      \item \textbf{Git}: versionado y control de cambios
+      \item \textbf{Python}: automatización y análisis
+      \item \textbf{Docker}: ambientes reproducibles
+    \end{enumerate}
+  \end{alertblock}
+\end{frame}
+
+% =====================================================
+% SECCIÓN 2: TERMINAL LINUX
+% =====================================================
+\section{Fase 1: Terminal y Bash}
+
+\begin{frame}{Navegación Básica}
+  \begin{itemize}
+    \item \texttt{pwd}: saber en qué carpeta estás actualmente
+    \item \texttt{ls -lh}: listar archivos con tamaños legibles
+    \item \texttt{cd carpeta}: cambiar a una carpeta
+    \item \texttt{mkdir -p ruta}: crear carpetas (y subcarpetas)
+  \end{itemize}
+
+  \vspace{0.5cm}
+
+  \begin{block}{Objetivo}
+    Aprender a orientarse en el sistema de archivos de un proyecto de datos.
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Navegación Básica: ejemplo}
+  \begin{exampleblock}{Sesión típica}
+\begin{lstlisting}[style=bashstyle]
+cd ~/proyecto_ia
+mkdir -p data/raw data/processed
+ls -lh data/
+\end{lstlisting}
+  \end{exampleblock}
+
+  \vspace{0.3cm}
+
+  \small
+  Esto crea carpetas para datos brutos y procesados, y verifica que existan.
+\end{frame}
+
+\begin{frame}{Manipulación de Archivos}
+  \begin{itemize}
+    \item \texttt{cp archivo.txt copia.txt}: copiar (usa \texttt{-i} para preguntar)
+    \item \texttt{mv viejo.txt nuevo.txt}: mover o renombrar
+    \item \texttt{rm -i archivo.txt}: eliminar con confirmación
+    \item \texttt{du -sh *}: ver tamaño de carpetas
+    \item \texttt{wc -l datos.csv}: contar filas
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Manipulación de Archivos: ejemplo}
+  \begin{exampleblock}{Organizar proyecto}
+\begin{lstlisting}[style=bashstyle]
+cd ~/proyecto_ia
+mkdir -p scripts reports
+cp ~/sensores.csv data/raw/sensores.csv
+mv README_tmp.md README.md
+\end{lstlisting}
+  \end{exampleblock}
+
+  \vspace{0.3cm}
+
+  \small
+  Las operaciones básicas permiten organizar un proyecto profesional.
+\end{frame}
+
+\begin{frame}{Pipelines con Pipes}
+  El operador \texttt{|} encadena comandos: salida de uno = entrada del siguiente.
+
+  \vspace{0.5cm}
+
+  \begin{itemize}
+    \item \texttt{cut}: extrae columnas
+    \item \texttt{sort}: ordena filas
+    \item \texttt{uniq}: elimina duplicados
+  \end{itemize}
+
+  \vspace{0.5cm}
+
+  \textbf{Ventaja:} sin crear archivos intermedios, sin abrir editores gráficos.
+\end{frame}
+
+\begin{frame}[fragile]{Pipelines con Pipes: ejemplo}
+  \begin{exampleblock}{Análisis en una línea}
+\begin{lstlisting}[style=bashstyle]
+# Contar registros únicos por sensor
+cut -d',' -f1 sensores.csv | sort | uniq -c
+
+# Ver las 5 temperaturas más altas
+cut -d',' -f3 sensores.csv | sort -nr | head -5
+\end{lstlisting}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Procesamiento con awk}
+  \texttt{awk} es un mini-lenguaje para cálculos y manipulación en datos tabulares.
+
+  \vspace{0.5cm}
+
+  \begin{itemize}
+    \item Extrae columnas específicas
+    \item Filtra filas por condiciones
+    \item Calcula sumas, promedios, máximos
+    \item Genera reportes directamente
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Procesamiento con awk: ejemplos}
+  \begin{exampleblock}{Cálculos estadísticos}
+\begin{lstlisting}[style=bashstyle]
+# Temperatura promedio
+awk -F',' '{s+=$3} END {print s/NR}' sensores.csv
+
+# Contar registros con humedad < 30
+awk -F',' '$4 < 30 {count++} END {print count}' sensores.csv
+
+# Guardar filas con humedad > 80
+awk -F',' '$4 > 80 {print}' sensores.csv > alertas.csv
+\end{lstlisting}
+  \end{exampleblock}
+\end{frame}
+
+% =====================================================
+% SECCIÓN 3: GIT
+% =====================================================
+\section{Fase 2: Git y Versionado}
+
+\begin{frame}{¿Por Qué Git?}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Sin Git:}
+    \begin{itemize}
+      \item \texttt{modelo\_v1.pth}
+      \item \texttt{modelo\_v2\_final.pth}
+      \item \texttt{modelo\_v2\_final2.pth}
+      \item ¿Quién cambió qué?
+      \item ¿Cuándo?
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{Con Git:}
+    \begin{itemize}
+      \item Una versión actual
+      \item Historial completo
+      \item Quién hizo qué
+      \item Cuándo
+      \item Por qué (mensaje)
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Flujo Básico de Git}
+  \begin{enumerate}
+    \item \texttt{git init}: inicializar repositorio
+    \item \texttt{git status}: ver qué cambió
+    \item \texttt{git add .}: seleccionar cambios
+    \item \texttt{git commit -m "mensaje"}: guardar con descripción
+    \item \texttt{git log --oneline}: ver historial resumido
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Flujo Básico de Git: ejemplo}
+  \begin{exampleblock}{Primera sesión completa}
+\begin{lstlisting}[style=bashstyle]
+cd proyecto_ia
+git init
+git add .
+git commit -m "Inicial: estructura del proyecto"
+git log --oneline
+\end{lstlisting}
+  \end{exampleblock}
+
+  \vspace{0.3cm}
+
+  \small
+  Así comienza cualquier proyecto profesional de ciencia de datos.
+\end{frame}
+
+\begin{frame}{Buenas Prácticas: .gitignore}
+  \textbf{¿Qué NO debe versionarse?}
+  \begin{itemize}
+    \item \texttt{data/raw/}: datos brutos sin procesar
+    \item \texttt{*.pth, *.h5}: modelos entrenados (muy grandes)
+    \item \texttt{venv/}: entornos virtuales
+    \item \texttt{.ipynb\_checkpoints/}: archivos temporales
+    \item \texttt{\_\_pycache\_\_/}: cache de Python
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Buenas Prácticas: .gitignore (crear)}
+  \begin{exampleblock}{Crear archivo .gitignore}
+\begin{lstlisting}[style=bashstyle]
+cat > .gitignore << EOF
+venv/
+data/raw/
+*.pth
+.ipynb_checkpoints/
+__pycache__/
+EOF
+
+git add .gitignore
+git commit -m "Configura .gitignore"
+\end{lstlisting}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Mensajes de Commit Claros}
+  \begin{alertblock}{Evitar}
+    \begin{itemize}
+      \item \texttt{"cambios"}
+      \item \texttt{"arreglado"}
+      \item \texttt{"v2"}
+    \end{itemize}
+  \end{alertblock}
+
+  \begin{exampleblock}{Hacer}
+    \begin{itemize}
+      \item \texttt{"Añade validación de valores faltantes"}
+      \item \texttt{"Corrige filtro de humedad en CSV"}
+      \item \texttt{"Implementa pipeline de limpieza automática"}
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+% =====================================================
+% SECCIÓN 4: PYTHON Y ENTORNOS
+% =====================================================
+\section{Fase 3: Python y Entornos Virtuales}
+
+\begin{frame}{Entornos Virtuales: Problema}
+  \begin{itemize}
+    \item Proyecto A necesita \texttt{pandas 1.0}
+    \item Proyecto B necesita \texttt{pandas 2.0}
+    \item \texttt{pip install pandas==2.0} rompe Proyecto A
+  \end{itemize}
+
+  \vspace{1cm}
+
+  \begin{block}{Solución}
+    Cada proyecto su propio entorno aislado.
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Entornos Virtuales: crear}
+  \begin{exampleblock}{Crear un entorno}
+\begin{lstlisting}[style=bashstyle]
+python -m venv ia_env
+source ia_env/bin/activate
+pip install pandas numpy scikit-learn
+pip freeze > requirements.txt
+\end{lstlisting}
+  \end{exampleblock}
+
+  \vspace{0.3cm}
+
+  \small
+  \texttt{requirements.txt} guarda las versiones exactas instaladas.
+\end{frame}
+
+\begin{frame}[fragile]{Entornos Virtuales: reproducir}
+  \begin{exampleblock}{Recrear el mismo entorno en otra máquina}
+\begin{lstlisting}[style=bashstyle]
+python -m venv ia_env
+source ia_env/bin/activate
+pip install -r requirements.txt
+\end{lstlisting}
+  \end{exampleblock}
+
+  \vspace{0.3cm}
+
+  \small
+  Garantiza que otros colaboradores y servidores tengan las mismas versiones.
+\end{frame}
+
+\begin{frame}[fragile]{Pipeline Shell + Python}
+  \begin{exampleblock}{Combinar lo mejor de ambos mundos}
+\begin{lstlisting}[style=bashstyle]
+#!/bin/bash
+source ia_env/bin/activate
+
+# Procesar con shell
+cut -d',' -f1,3,4 data/raw/sensores.csv > temp.csv
+
+# Analizar con Python
+python - << EOF
+import pandas as pd
+df = pd.read_csv('temp.csv')
+print(df.describe())
+EOF
+\end{lstlisting}
+  \end{exampleblock}
+\end{frame}
+
+% =====================================================
+% SECCIÓN 5: DOCKER
+% =====================================================
+\section{Fase 4: Docker}
+
+\begin{frame}{¿Por Qué Docker?}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Mi máquina:}
+    \begin{itemize}
+      \item Python 3.10
+      \item pandas 2.0
+      \item Funciona
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{En el servidor:}
+    \begin{itemize}
+      \item Python 3.8
+      \item pandas 1.5
+      \item ¡Error!
+    \end{itemize}
+  \end{columns}
+
+  \vspace{1cm}
+
+  \centering
+  \textbf{Docker: "Empaqueta tu ambiente completo"}
+\end{frame}
+
+\begin{frame}{Conceptos Básicos de Docker}
+  \begin{block}{Imagen}
+    Plantilla inmutable: \texttt{FROM python:3.10} + librerías + código
+  \end{block}
+
+  \begin{block}{Contenedor}
+    Instancia en ejecución de una imagen
+  \end{block}
+
+  \begin{block}{Dockerfile}
+    Archivo que describe cómo construir la imagen
+  \end{block}
+
+  \begin{block}{Registry}
+    Lugar donde publicas imágenes (p.ej. Docker Hub)
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Dockerfile para Ciencia de Datos}
+  \begin{exampleblock}{Ejemplo mínimo}
+\begin{lstlisting}[style=bashstyle]
+FROM python:3.10-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8888
+CMD ["jupyter", "lab", "--ip=0.0.0.0"]
+\end{lstlisting}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Partes de un Dockerfile}
+  \begin{itemize}
+    \item \texttt{FROM}: imagen base oficial (p.ej. \texttt{python:3.10-slim})
+    \item \texttt{WORKDIR}: directorio de trabajo dentro del contenedor
+    \item \texttt{COPY}: copiar archivos locales
+    \item \texttt{RUN}: instalar dependencias (pip install, apt-get, etc.)
+    \item \texttt{EXPOSE}: puertos que expone (documentación)
+    \item \texttt{CMD}: comando por defecto al iniciar
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Construcción y Ejecución}
+  \begin{exampleblock}{Construir la imagen}
+\begin{lstlisting}[style=bashstyle]
+docker build -t proyecto_ia:latest .
+\end{lstlisting}
+  \end{exampleblock}
+
+  \vspace{0.3cm}
+
+  \begin{exampleblock}{Ejecutar un contenedor}
+\begin{lstlisting}[style=bashstyle]
+docker run --rm \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/reports:/app/reports \
+  proyecto_ia:latest
+\end{lstlisting}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Opciones de docker run}
+  \begin{itemize}
+    \item \texttt{-v carpeta\_local:/app/carpeta}: montar carpeta local dentro del contenedor
+    \item \texttt{--rm}: borrar contenedor al terminar (limpieza)
+    \item \texttt{-p 8888:8888}: exponer puerto (para Jupyter)
+    \item \texttt{-it}: modo interactivo (para shells)
+  \end{itemize}
+
+  \vspace{0.5cm}
+
+  \small
+  Los datos en tu máquina siempre están seguros; el contenedor solo ve lo que le permitas.
+\end{frame}
+
+\begin{frame}[fragile]{Docker Compose: Múltiples Servicios}
+  \begin{exampleblock}{docker-compose.yml}
+\begin{lstlisting}[style=bashstyle]
+version: "3.8"
+services:
+  db:
+    image: postgres:13
+  notebook:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8888:8888"
+\end{lstlisting}
+  \end{exampleblock}
+
+  \vspace{0.3cm}
+
+  \begin{lstlisting}[style=bashstyle]
+docker compose up    # Levanta ambos
+docker compose down  # Los apaga
+\end{lstlisting}
+\end{frame}
+
+% =====================================================
+% SECCIÓN 6: ESTRUCTURA DE PROYECTO
+% =====================================================
+\section{Estructura de Proyecto Profesional}
+
+\begin{frame}{Carpetas Recomendadas}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{itemize}
+      \item \texttt{data/raw/}: datos sin procesar
+      \item \texttt{data/processed/}: datos limpios
+      \item \texttt{scripts/}: código reutilizable
+      \item \texttt{notebooks/}: exploración Jupyter
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \begin{itemize}
+      \item \texttt{models/}: modelos entrenados
+      \item \texttt{reports/}: figuras y tablas
+      \item \texttt{README.md}: descripción
+      \item \texttt{requirements.txt}: dependencias
+    \end{itemize}
+  \end{columns}
+
+  \vspace{0.5cm}
+
+  \begin{alertblock}{Regla fundamental}
+    Si no está versionado en Git, no existe.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Crear Estructura Completa}
+  \begin{exampleblock}{Una sola orden}
+\begin{lstlisting}[style=bashstyle]
+mkdir -p proyecto_ia/{data/raw,data/processed,\
+scripts,notebooks,models,reports}
+
+cd proyecto_ia
+git init
+touch README.md
+git add .
+git commit -m "Inicial: estructura"
+\end{lstlisting}
+  \end{exampleblock}
+\end{frame}
+
+% =====================================================
+% SECCIÓN 7: FLUJO COMPLETO
+% =====================================================
+\section{Flujo Completo de un Proyecto}
+
+\begin{frame}{De Cero a Análisis}
+  \begin{enumerate}
+    \item Crear estructura con \texttt{mkdir -p}
+    \item \texttt{git init} + crear \texttt{.gitignore}
+    \item \texttt{python -m venv ia\_env}
+    \item Descargar datos a \texttt{data/raw/}
+    \item Scripts de limpieza en \texttt{scripts/}
+    \item Análisis en notebooks
+    \item Reportes en \texttt{reports/}
+    \item Commits frecuentes con mensajes claros
+    \item Crear \texttt{Dockerfile} para reproducibilidad
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Checklist Profesional}
+  \begin{itemize}
+    \item[\checkmark] Código versionado en Git
+    \item[\checkmark] Datos en carpeta \texttt{raw/}, nunca modificar
+    \item[\checkmark] Scripts reproducibles, no manuales
+    \item[\checkmark] Entorno virtual con \texttt{requirements.txt}
+    \item[\checkmark] README explicando el proyecto
+    \item[\checkmark] Dockerfile para ejecutar en cualquier máquina
+    \item[\checkmark] Datos sensibles en \texttt{.gitignore}
+    \item[\checkmark] Commits pequeños y frecuentes
+  \end{itemize}
+\end{frame}
+
+% =====================================================
+% SECCIÓN 8: RETO FINAL
+% =====================================================
+\section{Reto Final}
+
+\begin{frame}{Proyecto Completo: Monitoreo de Sensores}
+  Construye un proyecto que:
+
+  \begin{enumerate}
+    \item Descargue datos de sensores (archivo CSV)
+    \item Valide datos: cuente filas, busque faltantes
+    \item Limpie datos automáticamente
+    \item Genere gráficos y tablas
+    \item Guarde resultados en \texttt{reports/}
+    \item Todo versionado en Git
+    \item Todo reproducible en Docker
+  \end{enumerate}
+
+  \vspace{0.5cm}
+
+  \begin{alertblock}{Requisito: Idempotencia}
+    Ejecutar 10 veces debe dar el mismo resultado sin errores.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Componentes del Reto}
+  \begin{block}{Script de descarga}
+    \texttt{scripts/descargar\_datos.sh}: obtiene CSV de fuente confiable
+  \end{block}
+
+  \begin{block}{Script de validación}
+    \texttt{scripts/validar\_datos.py}: estadísticas y calidad
+  \end{block}
+
+  \begin{block}{Script de limpieza}
+    \texttt{scripts/limpiar\_datos.py}: elimina errores, guarda en \texttt{processed/}
+  \end{block}
+
+  \begin{block}{Dockerfile}
+    Ejecuta todo automáticamente en un contenedor
+  \end{block}
+\end{frame}
+
+% =====================================================
+% CIERRE
+% =====================================================
+\section{Siguientes Pasos}
+
+\begin{frame}{Nivel Intermedio}
+  \textbf{Herramientas complementarias:}
+  \begin{itemize}
+    \item MLflow: experiment tracking y reproducibilidad
+    \item GitHub Actions: CI/CD automático
+    \item DVC: versionado de datos grandes
+    \item Airflow: orquestación de pipelines
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Nivel Avanzado}
+  \textbf{Productividad y escalabilidad:}
+  \begin{itemize}
+    \item FastAPI: servir modelos como APIs
+    \item Kubernetes: orquestación de contenedores en producción
+    \item Prometheus + Grafana: monitoreo
+    \item GitLab CI/CD o Jenkins: pipelines complejos
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Recordar}
+  \centering
+
+  \Large
+  \textbf{La reproducibilidad es lo más importante.}
+
+  \vspace{1cm}
+
+  \normalsize
+  Un código sin documentación es deuda técnica. \\
+  Un modelo sin versión es imposible de auditar. \\
+  Datos sin respaldo desaparecen.
+
+  \vspace{1cm}
+
+  \small
+  \textbf{Las herramientas que aprendiste}
+  garantizan que tu trabajo sea sólido y duradero.
+\end{frame}
+
+\begin{frame}[plain]
+  \centering
+  \LARGE \textbf{¿Preguntas?}
+
+  \vspace{1.5cm}
+
+  \normalsize
+  Documentación oficial:
+  \begin{itemize}
+    \item Bash: \url{https://www.gnu.org/software/bash/manual/}
+    \item Git: \url{https://git-scm.com/doc}
+    \item Docker: \url{https://docs.docker.com/}
+    \item Python venv: \url{https://docs.python.org/3/library/venv.html}
+  \end{itemize}
+
+  \vspace{1cm}
+
+  \Large
+  \textbf{¡Muchas gracias!}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,961 @@
+\documentclass[12pt, a4paper]{article}
+
+% =====================================================
+% PAQUETES BASE (XeLaTeX)
+% =====================================================
+\usepackage{fontspec}
+\usepackage[spanish, es-tabla, es-noquoting]{babel}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+
+% =====================================================
+% GEOMETRÍA
+% =====================================================
+\geometry{
+  top=2.5cm,
+  bottom=2.5cm,
+  left=2.5cm,
+  right=3cm,
+  headheight=15pt
+}
+
+% =====================================================
+% COLORES PROFESIONALES
+% =====================================================
+\definecolor{primary}{RGB}{0, 51, 102}
+\definecolor{accent}{RGB}{46, 139, 87}
+\definecolor{danger}{RGB}{180, 0, 0}
+\definecolor{terminalbg}{RGB}{28, 28, 28}
+\definecolor{terminalfg}{RGB}{135, 255, 0}
+
+% =====================================================
+% CAJAS
+% =====================================================
+\newtcolorbox{agrobox}[1]{
+  colback=accent!5!white,
+  colframe=accent,
+  title=#1,
+  fonttitle=\bfseries,
+  boxrule=0.6mm,
+  arc=2mm,
+  enhanced
+}
+
+\newtcolorbox{infobox}[1]{
+  colback=primary!5!white,
+  colframe=primary,
+  title=#1,
+  fonttitle=\bfseries,
+  boxrule=0.6mm,
+  arc=2mm,
+  enhanced
+}
+
+\newtcolorbox{warningbox}[1]{
+  colback=danger!5!white,
+  colframe=danger,
+  title=#1,
+  fonttitle=\bfseries,
+  boxrule=0.6mm,
+  arc=2mm,
+  enhanced
+}
+
+% =====================================================
+% ESTILO DE CÓDIGO
+% =====================================================
+\lstdefinestyle{bashstyle}{
+  backgroundcolor=\color{terminalbg},
+  basicstyle=\ttfamily\footnotesize\color{terminalfg},
+  breaklines=true,
+  language=bash,
+  showstringspaces=false,
+  keywordstyle=\color{cyan},
+  commentstyle=\color{gray!70}\itshape
+}
+
+% =====================================================
+% ENCABEZADO
+% =====================================================
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\color{primary}\textbf{Ingeniería de IA I}}
+\rhead{Cimientos Técnicos}
+\rfoot{Página \thepage}
+
+% =====================================================
+% PORTADA
+% =====================================================
+\title{\Huge\textbf{Manual de Ingeniería de IA I}\\
+\vspace{0.5cm}
+\Large Ciencia de Datos, Bash, Git y MLOps Inicial}
+\author{AgroFuture AI Training}
+\date{Enero 2026}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+% =====================================================
+% ABSTRACT
+% =====================================================
+\begin{abstract}
+El 80\% del éxito de un proyecto de Inteligencia Artificial depende de la ingeniería de datos, automatización y reproducibilidad.
+Este manual forma al estudiante en las herramientas fundamentales que todo científico de datos profesional domina:
+terminal Linux, procesamiento de datos, control de versiones y gestión de entornos.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% =====================================================
+% PREFACIO
+% =====================================================
+\section*{Prefacio: Tu Laboratorio Digital}
+
+Imagina una finca equipada con sensores que generan miles de registros diarios en archivos CSV comprimidos.
+Abrir archivos manualmente no es una opción sostenible cuando los datos crecen. [web:1][web:11]
+La ciencia de datos comienza cuando automatizas, validas y documentas cada paso del flujo de trabajo.
+
+\begin{infobox}{Principio Fundamental}
+Un modelo que no puede reproducirse no es ciencia: es magia.
+\end{infobox}
+
+\newpage
+
+% =====================================================
+% ROL DEL CIENTÍFICO DE DATOS
+% =====================================================
+\section{¿Qué Hace Realmente un Científico de Datos?}
+
+Un científico de datos profesional:
+\begin{itemize}
+  \item Diseña flujos de datos reproducibles desde la captura hasta el reporte.
+  \item Automatiza procesos repetitivos para evitar errores humanos.
+  \item Detecta y corrige errores en los datos antes de entrenar modelos.
+  \item Documenta decisiones técnicas para que otros puedan auditar y mejorar el trabajo.
+  \item Piensa en escalabilidad, mantenimiento y colaboración con otros perfiles técnicos.
+\end{itemize}
+
+\begin{agrobox}{Distribución Real del Trabajo}
+Por cada hora entrenando modelos:
+\begin{itemize}
+  \item 3 horas en limpieza y validación de datos.
+  \item 2 horas en automatización y scripting.
+  \item 1 hora en documentación y versionado.
+\end{itemize}
+\end{agrobox}
+
+\begin{infobox}{Objetivo de este manual}
+Al finalizar este manual podrás:
+\begin{itemize}
+  \item Navegar y manipular archivos desde la terminal Linux.
+  \item Construir pequeños pipelines de procesamiento de datos con Bash.
+  \item Usar Git como bitácora científica de tus experimentos.
+  \item Gestionar entornos de Python para proyectos de ciencia de datos.
+\end{itemize}
+\end{infobox}
+
+\newpage
+
+% =====================================================
+% FASE 1
+% =====================================================
+\section{Fase 1: Supervivencia en la Terminal}
+
+La terminal es un lenguaje de programación declarativo para hablar con el sistema operativo.
+Todo flujo de datos sigue la lógica:
+\[
+\text{entrada} \rightarrow \text{proceso} \rightarrow \text{salida}
+\]
+En esta fase aprenderás a orientarte en el sistema de archivos y manipular archivos como un científico de datos.
+
+\subsection{Navegación Básica}
+
+\begin{infobox}{Objetivo}
+Aprender a saber dónde estás, qué archivos hay y cómo moverte entre carpetas de un proyecto de datos. [web:2][web:24]
+\end{infobox}
+
+Comandos clave:
+\begin{itemize}
+  \item \texttt{pwd}: muestra la ruta completa de la carpeta actual.
+  \item \texttt{ls -lh}: lista archivos con tamaños legibles.
+  \item \texttt{ls *.csv}: lista solo archivos CSV en la carpeta actual.
+  \item \texttt{cd carpeta}: cambia a una subcarpeta.
+  \item \texttt{cd ..}: sube un nivel en la jerarquía.
+  \item \texttt{cd \textasciitilde}: va a la carpeta personal del usuario.
+\end{itemize}
+
+\begin{lstlisting}[style=bashstyle]
+# Ver en qué carpeta estás
+pwd
+/home/estudiante
+
+# Listar el contenido de la carpeta actual
+ls -lh
+drwxr-xr-x 2 estudiante estudiante 4.0K ene 10 proyectos
+-rw-r--r-- 1 estudiante estudiante 1.2M ene 10 sensores.csv
+
+# Entrar a la carpeta del proyecto
+cd proyectos
+pwd
+/home/estudiante/proyectos
+
+# Listar solo archivos CSV
+ls *.csv
+sensores.csv resumen_mensual.csv
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio guiado}
+\begin{enumerate}
+  \item Crea una carpeta \texttt{proyecto\_ia} dentro de tu \texttt{\textasciitilde}.
+  \item Dentro de \texttt{proyecto\_ia}, crea las carpetas \texttt{data}, \texttt{scripts} y \texttt{reports}.
+  \item Usa \texttt{pwd} y \texttt{ls -lh} en cada paso para verificar que estás en la carpeta correcta.
+\end{enumerate}
+\end{agrobox}
+
+\subsection{Gestión de Archivos}
+
+\begin{infobox}{Objetivo}
+Crear, copiar, mover y eliminar archivos y carpetas para organizar un proyecto de datos. [web:24]
+\end{infobox}
+
+Comandos frecuentes:
+\begin{itemize}
+  \item \texttt{mkdir -p ruta}: crea una carpeta (y las intermedias si no existen).
+  \item \texttt{touch archivo}: crea un archivo vacío o actualiza su fecha.
+  \item \texttt{cp origen destino}: copia archivos.
+  \item \texttt{mv origen destino}: mueve o renombra archivos.
+  \item \texttt{rm archivo}: elimina archivos.
+\end{itemize}
+
+\begin{lstlisting}[style=bashstyle]
+# Crear estructura de carpetas del proyecto
+mkdir -p proyecto_ia/data/raw
+mkdir -p proyecto_ia/data/processed
+mkdir -p proyecto_ia/scripts
+mkdir -p proyecto_ia/reports
+
+# Crear un archivo de notas vacío
+cd proyecto_ia
+touch notas_proyecto.md
+
+# Copiar un CSV de sensores al directorio raw
+cp ~/sensores.csv data/raw/sensores.csv
+
+# Renombrar el archivo de notas
+mv notas_proyecto.md README.md
+
+# Eliminar un archivo (con confirmación si usas alias de seguridad)
+rm data/raw/archivo_innecesario.csv
+\end{lstlisting}
+
+\begin{warningbox}{Advertencia}
+\texttt{rm} elimina permanentemente. Usa siempre \texttt{rm -i} para que pregunte antes de borrar cada archivo.
+Más adelante definiremos alias de seguridad. [web:24]
+\end{warningbox}
+
+\begin{agrobox}{Ejercicio}
+Diseña la estructura de carpetas para un proyecto de monitoreo de humedad de suelo y crea:
+\begin{itemize}
+  \item Una carpeta \texttt{figures} para gráficos.
+  \item Una carpeta \texttt{logs} para registros de ejecución.
+  \item Un archivo \texttt{TODO.md} en la raíz del proyecto.
+\end{itemize}
+\end{agrobox}
+
+\subsection{Comandos Clave de Científico de Datos}
+
+\begin{infobox}{Objetivo}
+Medir uso de disco, buscar archivos de datos y operar sobre columnas de archivos CSV desde la terminal. [web:1][web:3][web:11]
+\end{infobox}
+
+Comandos útiles:
+\begin{itemize}
+  \item \texttt{du -sh *}: muestra el tamaño de cada archivo/carpeta.
+  \item \texttt{df -h}: muestra el espacio disponible en discos.
+  \item \texttt{find . -name "*.csv"}: busca archivos con extensión \texttt{.csv}.
+  \item \texttt{cut -d',' -f1}: extrae columnas de un CSV.
+  \item \texttt{sort | uniq}: ordena y elimina duplicados.
+\end{itemize}
+
+\begin{lstlisting}[style=bashstyle]
+# Ver qué carpeta ocupa más espacio dentro de data
+cd proyecto_ia/data
+du -sh *
+
+# Ver espacio disponible en el disco
+df -h
+
+# Buscar todos los archivos CSV en el proyecto
+cd ..
+find . -name "*.csv"
+
+# Extraer la primera columna (por ejemplo, id_sensor) de un CSV
+cd data/raw
+cut -d',' -f1 sensores.csv | head
+
+# Obtener lista única de sensores
+cut -d',' -f1 sensores.csv | sort | uniq | head
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio aplicado}
+Supón que \texttt{sensores.csv} tiene columnas \texttt{id\_sensor,fecha,temperatura,humedad}.
+\begin{enumerate}
+  \item Obtén la lista única de \texttt{id\_sensor} ordenada alfabéticamente.
+  \item Cuenta cuántos registros totales tiene el archivo.
+  \item Calcula cuántos registros hay por cada \texttt{id\_sensor} usando \texttt{sort | uniq -c}.
+\end{enumerate}
+\end{agrobox}
+
+\newpage
+
+% =====================================================
+% FASE 2
+% =====================================================
+\section{Fase 2: Procesamiento y Automatización}
+
+En esta fase aprenderás a inspeccionar datos reales, detectar errores frecuentes y construir pequeños pipelines de procesamiento usando la terminal. [web:3][web:11]
+
+\subsection{Inspección de Datos}
+
+\begin{infobox}{Objetivo}
+Inspeccionar rápidamente el contenido de archivos grandes sin abrirlos en un editor gráfico. [web:1][web:3]
+\end{infobox}
+
+Comandos:
+\begin{itemize}
+  \item \texttt{head -n 5 datos.csv}: muestra las primeras 5 líneas.
+  \item \texttt{tail -n 5 datos.csv}: muestra las últimas 5 líneas.
+  \item \texttt{wc -l datos.csv}: cuenta las líneas del archivo.
+  \item \texttt{less datos.csv}: permite navegar por el archivo.
+\end{itemize}
+
+\begin{lstlisting}[style=bashstyle]
+# Ver las primeras líneas de sensores.csv
+cd proyecto_ia/data/raw
+head -n 5 sensores.csv
+
+# Ver las últimas líneas (útil para ver fechas recientes)
+tail -n 5 sensores.csv
+
+# Contar cuántos registros hay
+wc -l sensores.csv
+
+# Navegar por el archivo (q para salir)
+less sensores.csv
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio}
+\begin{enumerate}
+  \item Usa \texttt{head} y \texttt{tail} para identificar si el archivo está ordenado por fecha.
+  \item Usa \texttt{wc -l} para estimar cuántos días de datos tienes si hay 1 registro por minuto.
+\end{enumerate}
+\end{agrobox}
+
+\subsection{Datos Reales y Errores Comunes}
+
+Los datos reales contienen errores:
+\begin{itemize}
+  \item Valores faltantes representados como cadenas vacías o símbolos especiales.
+  \item Separadores inconsistentes (comas, punto y coma, tabuladores).
+  \item Registros corruptos con caracteres no ASCII. [web:11][web:23]
+\end{itemize}
+
+\begin{lstlisting}[style=bashstyle]
+# Buscar columnas vacías consecutivas ,, que pueden indicar datos faltantes
+grep ",," sensores.csv | head
+
+# Detectar caracteres no ASCII (posibles errores de codificación)
+grep -P "[^\x00-\x7F]" sensores.csv | head
+\end{lstlisting}
+
+\begin{warningbox}{Atención}
+Antes de entrenar cualquier modelo, debes conocer la calidad de tus datos.
+No confíes en que el archivo está limpio solo porque se abre en una hoja de cálculo. [web:11]
+\end{warningbox}
+
+\subsection{Pipelines con Pipes}
+
+El operador \texttt{|} (pipe) conecta la salida de un comando con la entrada de otro.
+Permite encadenar operaciones simples para construir un procesamiento más complejo. [web:3][web:20]
+
+\begin{lstlisting}[style=bashstyle]
+# Contar cuántas veces aparece cada id_sensor en el archivo
+cut -d',' -f1 sensores.csv | sort | uniq -c | sort -nr | head
+
+# Obtener los 10 valores de temperatura más altos registrados
+cut -d',' -f3 sensores.csv | sort -nr | head
+
+# Filtrar solo las líneas de un sensor específico y contarlas
+grep "SENSOR_05" sensores.csv | wc -l
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio de pipeline}
+Construye un pipeline que:
+\begin{enumerate}
+  \item Se quede solo con las columnas \texttt{id\_sensor,temperatura}.
+  \item Ordene por temperatura descendente.
+  \item Muestre las 5 mediciones más altas por pantalla.
+\end{enumerate}
+\end{agrobox}
+
+\subsection{Procesamiento con awk}
+
+\texttt{awk} es un mini-lenguaje para procesar texto y columnas; permite calcular estadísticas básicas directamente desde la terminal. [web:3][web:19][web:23]
+
+\begin{lstlisting}[style=bashstyle]
+# Calcular la temperatura promedio (suponiendo que está en la columna 3)
+awk -F',' '{s+=$3} END {print "Temperatura promedio:", s/NR}' sensores.csv
+
+# Calcular la humedad máxima (columna 4)
+awk -F',' 'NR>1 {if($4>max) max=$4} END {print "Humedad máxima:", max}' sensores.csv
+
+# Filtrar solo filas con humedad menor a 30
+awk -F',' '$4 < 30 {print $0}' sensores.csv | head
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio con awk}
+\begin{enumerate}
+  \item Usa \texttt{awk} para calcular la temperatura mínima.
+  \item Calcula la suma total de registros donde \texttt{humedad < 40}.
+  \item Guarda las filas con \texttt{humedad > 80} en un archivo \texttt{alertas\_humedad.csv}.
+\end{enumerate}
+\end{agrobox}
+
+\newpage
+
+% =====================================================
+% FASE 3
+% =====================================================
+\section{Fase 3: Profesionalismo y Control}
+
+En esta fase transformarás tu carpeta de archivos sueltos en un proyecto versionado con Git, usando buenas prácticas de colaboración. [web:18][web:22][web:25]
+
+\subsection{Git como Bitácora Científica}
+
+Git es un sistema de control de versiones distribuido que registra la historia de tu proyecto, permitiéndote volver a estados anteriores y colaborar con otros. [web:18][web:22]
+
+Flujo básico:
+\begin{enumerate}
+  \item \texttt{git init}: inicializa el repositorio.
+  \item \texttt{git status}: muestra el estado actual.
+  \item \texttt{git add}: selecciona cambios para guardar.
+  \item \texttt{git commit}: guarda un “fotograma” con mensaje.
+\end{enumerate}
+
+\begin{lstlisting}[style=bashstyle]
+cd ~/proyecto_ia
+
+# Inicializar repositorio Git
+git init
+
+# Ver estado (archivos sin seguimiento)
+git status
+
+# Añadir todos los archivos para el primer commit
+git add .
+
+# Crear el commit inicial con un mensaje descriptivo
+git commit -m "Inicial: estructura del proyecto de monitoreo de sensores"
+
+# Ver el historial de commits
+git log --oneline
+\end{lstlisting}
+
+\begin{infobox}{Buenas prácticas de commits}
+\begin{itemize}
+  \item Haz commits pequeños y frecuentes.
+  \item Usa mensajes que expliquen el \emph{por qué} del cambio.
+  \item Agrupa cambios relacionados en un mismo commit. [web:9][web:15]
+\end{itemize}
+\end{infobox}
+
+\subsection{Uso de .gitignore}
+
+El archivo \texttt{.gitignore} indica a Git qué archivos o carpetas no deben versionarse (datos brutos, modelos grandes, archivos temporales). [web:9][web:18]
+
+\begin{lstlisting}[style=bashstyle]
+# Ejemplo de .gitignore para un proyecto de ciencia de datos
+venv/
+data/raw/
+data/intermediate/
+*.pth
+*.log
+*.tmp
+.ipynb_checkpoints/
+__pycache__/
+\end{lstlisting}
+
+\begin{lstlisting}[style=bashstyle]
+# Crear el archivo .gitignore
+cat > .gitignore << EOF
+venv/
+data/raw/
+data/intermediate/
+*.pth
+*.log
+*.tmp
+.ipynb_checkpoints/
+__pycache__/
+EOF
+
+git add .gitignore
+git commit -m "Configura .gitignore para datos brutos y artefactos"
+\end{lstlisting}
+
+\begin{warningbox}{Regla práctica}
+Nunca subas datos sensibles ni archivos de gran tamaño al repositorio.
+Para datos grandes, considera herramientas como Git LFS u otros almacenes externos. [web:9][web:22]
+\end{warningbox}
+
+\subsection{Ramas sencillas para experimentos}
+
+Aunque este manual se centra en lo básico, es útil conocer el concepto de rama (\emph{branch}) para experimentar sin romper la versión estable. [web:22][web:25]
+
+\begin{lstlisting}[style=bashstyle]
+# Crear una rama para experimentar con una nueva limpieza
+git checkout -b feature/limpieza_avanzada
+
+# Modificar scripts, probar...
+git add scripts/limpieza_sensores.sh
+git commit -m "Implementa limpieza de valores atipicos"
+
+# Volver a la rama principal
+git checkout main  # o master, según el nombre que uses
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio de bitácora}
+Crea un repositorio Git para tu proyecto de sensores y:
+\begin{itemize}
+  \item Haz un commit inicial con la estructura de carpetas.
+  \item Haz un segundo commit cuando añadas el primer script de limpieza.
+  \item Escribe mensajes de commit que indiquen claramente qué cambió y por qué.
+\end{itemize}
+\end{agrobox}
+
+\subsection{Entornos Virtuales de Python}
+
+Un entorno virtual aísla las dependencias de un proyecto para evitar conflictos entre versiones de librerías. [web:10]
+
+\begin{lstlisting}[style=bashstyle]
+# Crear un entorno virtual llamado ia_env
+cd ~/proyecto_ia
+python -m venv ia_env
+
+# Activar el entorno (en Linux/macOS)
+source ia_env/bin/activate
+
+# Instalar librerías de ciencia de datos
+pip install pandas numpy
+
+# Congelar las versiones instaladas
+pip freeze > requirements.txt
+
+# Desactivar el entorno cuando termines
+deactivate
+\end{lstlisting}
+
+Para recrear el entorno en otra máquina:
+\begin{lstlisting}[style=bashstyle]
+python -m venv ia_env
+source ia_env/bin/activate
+pip install -r requirements.txt
+\end{lstlisting}
+
+\begin{infobox}{Ventajas de entornos virtuales}
+\begin{itemize}
+  \item Cada proyecto tiene sus propias versiones de librerías.
+  \item Facilitan la reproducibilidad al compartir \texttt{requirements.txt}.
+  \item Evitan romper otros proyectos al actualizar paquetes. [web:7][web:10]
+\end{itemize}
+\end{infobox}
+
+\newpage
+
+% =====================================================
+% FASE 4
+% =====================================================
+\section{Fase 4: Ciencia Reproducible}
+
+Una buena estructura de proyecto permite que cualquier persona entienda dónde están los datos, el código, los modelos y los reportes. [web:9][web:12]
+
+\begin{verbatim}
+proyecto_ia/
+├── data/
+│   ├── raw/         # datos brutos (no limpios)
+│   └── processed/   # datos listos para análisis/modelado
+├── scripts/         # scripts de limpieza, descarga, validación
+├── notebooks/       # cuadernos exploratorios (Jupyter)
+├── models/          # modelos entrenados y artefactos
+├── reports/         # informes, figuras y tablas
+└── README.md        # descripción del proyecto
+\end{verbatim}
+
+\begin{infobox}{Regla}
+Si no está versionado, no existe.
+\end{infobox}
+
+\begin{lstlisting}[style=bashstyle]
+# Crear toda la estructura con un solo comando
+mkdir -p proyecto_ia/{data/raw,data/processed,scripts,notebooks,models,reports}
+
+# Crear un README mínimo
+cat > README.md << EOF
+# Proyecto IA - Monitoreo de Sensores
+
+Este proyecto analiza datos de sensores de una finca para detectar
+anomalías de humedad y temperatura.
+EOF
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio de organización}
+\begin{itemize}
+  \item Decide en qué carpeta guardarías un script que descarga datos desde una API.
+  \item Decide dónde guardarías un gráfico de correlación temperatura-humedad.
+  \item Anota en el README un breve flujo: de \texttt{data/raw} a \texttt{data/processed}.
+\end{itemize}
+\end{agrobox}
+
+\newpage
+
+% =====================================================
+% FASE 5
+% =====================================================
+\section{Fase 5: Del Shell a Python}
+
+En esta fase se muestra cómo combinar la potencia de la terminal con Python y \texttt{pandas} para análisis más avanzados. [web:11]
+
+\subsection{Llamar Python desde la Terminal}
+
+\begin{lstlisting}[style=bashstyle]
+# Ejecutar un bloque de Python directamente desde Bash
+python - << EOF
+import pandas as pd
+
+# Cargar datos de sensores
+df = pd.read_csv("data/raw/sensores.csv")
+
+# Mostrar resumen estadístico
+print(df.describe())
+
+# Filtrar registros con humedad mayor a 80
+alertas = df[df["humedad"] > 80]
+print("Numero de alertas de alta humedad:", len(alertas))
+EOF
+\end{lstlisting}
+
+\subsection{Replicar un pipeline de shell en Python}
+
+Supón que en Bash calculaste la temperatura promedio con \texttt{awk}.
+Ahora harás lo mismo en Python. [web:11][web:19]
+
+\begin{lstlisting}[style=bashstyle]
+python - << EOF
+import pandas as pd
+
+df = pd.read_csv("data/raw/sensores.csv")
+
+# Temperatura promedio
+print("Temperatura promedio:", df["temperatura"].mean())
+
+# Humedad máxima
+print("Humedad máxima:", df["humedad"].max())
+
+# Guardar solo columnas clave en processed
+cols = ["id_sensor", "fecha", "temperatura", "humedad"]
+df[cols].to_csv("data/processed/sensores_limpios.csv", index=False)
+EOF
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio de traducción}
+Toma un pipeline de Bash de la Fase 2 que:
+\begin{itemize}
+  \item Filtra registros por un \texttt{id\_sensor}.
+  \item Calcula una estadística (promedio, máximo, mínimo).
+  \item Guarda un archivo filtrado.
+\end{itemize}
+Escríbelo ahora en Python usando \texttt{pandas}.
+\end{agrobox}
+
+\newpage
+
+% =====================================================
+% RETO FINAL
+% =====================================================
+\section*{Reto Profesional}
+
+Construye un script Bash (\texttt{scripts/setup\_proyecto.sh}) que:
+\begin{enumerate}
+  \item Cree la estructura del proyecto (\texttt{data/}, \texttt{scripts/}, \texttt{models/}, \texttt{reports/}).
+  \item Descargue un dataset público (por ejemplo, desde una URL) y lo guarde en \texttt{data/raw}.
+  \item Valide los datos: cuente filas, busque valores faltantes y caracteres extraños.
+  \item Genere un reporte de texto en \texttt{reports/reporte\_inicial.txt} con los resultados.
+  \item Registre todo en Git con commits claros y ordenados.
+\end{enumerate}
+
+\begin{warningbox}{Idempotencia}
+El script debe ejecutarse múltiples veces sin fallar:
+\begin{itemize}
+  \item Verifica si las carpetas ya existen antes de crearlas.
+  \item No descargues el archivo si ya está presente.
+  \item Evita sobrescribir reportes sin avisar.
+\end{itemize}
+\end{warningbox}
+
+\begin{agrobox}{Extensión opcional}
+Añade una llamada a Python al final del script para generar un pequeño resumen estadístico de las columnas numéricas y guardarlo en \texttt{reports/estadisticas.csv}.
+\end{agrobox}
+\newpage
+% =====================================================
+% FASE 6
+% =====================================================
+\section{Fase 6: Docker para Ciencia de Datos}
+
+Docker permite crear \emph{contenedores}: ambientes ligeros que incluyen sistema base, librerías y tu código, de forma reproducible. [web:30][web:37]
+En ciencia de datos se usa para asegurar que un experimento funcione igual en tu portátil, en un servidor o en la nube.
+
+\subsection{Conceptos Fundamentales}
+
+\begin{infobox}{Objetivo}
+Comprender la diferencia entre imagen y contenedor, y por qué Docker mejora la reproducibilidad frente a instalaciones manuales. [web:30][web:36]
+\end{infobox}
+
+Conceptos clave:
+\begin{itemize}
+  \item \textbf{Imagen}: plantilla inmutable con sistema base (por ejemplo, \texttt{python:3.10}), librerías y tu código.
+  \item \textbf{Contenedor}: instancia en ejecución de una imagen; se puede iniciar, detener y borrar sin afectar la imagen.
+  \item \textbf{Dockerfile}: archivo de texto que describe cómo construir una imagen.
+  \item \textbf{Registry}: lugar donde se publican y comparten imágenes, como Docker Hub. [web:36][web:40]
+\end{itemize}
+
+\begin{lstlisting}[style=bashstyle]
+# Ver versión de Docker instalada
+docker --version
+
+# Descargar una imagen de Python oficial
+docker pull python:3.10-slim
+
+# Ver imágenes disponibles localmente
+docker images
+
+# Ver contenedores en ejecución
+docker ps
+\end{lstlisting}
+
+\begin{agrobox}{Ejercicio}
+\begin{enumerate}
+  \item Instala Docker en tu sistema y ejecuta \texttt{docker run hello-world}.
+  \item Verifica que entiendes la diferencia entre \texttt{docker images} y \texttt{docker ps}.
+\end{enumerate}
+\end{agrobox}
+
+\subsection{Primer Contenedor para Análisis}
+
+Para probar Docker, puedes usar una imagen oficial de Python y ejecutar un análisis simple desde la línea de comandos. [web:30][web:36]
+
+\begin{lstlisting}[style=bashstyle]
+# Ejecutar Python interactivo en un contenedor temporal
+docker run -it --rm python:3.10-slim python
+
+# Ejecutar un script simple directamente
+echo "print(2 + 3)" > test.py
+docker run --rm -v $(pwd):/app -w /app python:3.10-slim python test.py
+\end{lstlisting}
+
+En este ejemplo:
+\begin{itemize}
+  \item \texttt{-v \$(pwd):/app} monta tu carpeta actual dentro del contenedor en \texttt{/app}.
+  \item \texttt{-w /app} fija el directorio de trabajo dentro del contenedor.
+  \item \texttt{--rm} borra el contenedor al finalizar, evitando basura. [web:36]
+\end{itemize}
+
+\begin{warningbox}{Datos y contenedores}
+Nunca guardes datos importantes sólo dentro del contenedor.
+Usa montajes de volúmenes para que los datos vivan en tu sistema o en volúmenes persistentes. [web:26][web:27]
+\end{warningbox}
+
+\subsection{Dockerfile para un Proyecto de Datos}
+
+La forma profesional de usar Docker es escribir un \texttt{Dockerfile} que defina el ambiente para tu proyecto de ciencia de datos. [web:26][web:29][web:36]
+
+\begin{lstlisting}[style=bashstyle]
+# Dockerfile para proyecto_ia
+
+# 1. Imagen base con Python
+FROM python:3.10-slim
+
+# 2. Directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# 3. Copiar solo requirements primero (mejora la cache de build)
+COPY requirements.txt .
+
+# 4. Instalar dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 5. Copiar el resto del código
+COPY . .
+
+# 6. Crear directorios de datos (si no existen)
+RUN mkdir -p /app/data/raw /app/data/processed /app/reports
+
+# 7. Declarar un volumen para datos (opcional)
+VOLUME ["/app/data"]
+
+# 8. Comando por defecto (se puede sobreescribir)
+CMD ["python", "scripts/analisis_inicial.py"]
+\end{lstlisting}
+
+\begin{lstlisting}[style=bashstyle]
+# Construir la imagen (ejecutar en la raíz del proyecto)
+docker build -t proyecto_ia:latest .
+
+# Ejecutar un contenedor montando tus datos locales
+docker run --rm \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/reports:/app/reports \
+  proyecto_ia:latest
+\end{lstlisting}
+
+\begin{infobox}{Buenas prácticas de Dockerfile}
+\begin{itemize}
+  \item Usa imágenes base oficiales y ligeras, como \texttt{python:3.X-slim}.
+  \item Copia primero \texttt{requirements.txt} para aprovechar la cache de instalación de librerías.
+  \item Evita copiar datos brutos dentro de la imagen; monta datos desde fuera. [web:26][web:32]
+\end{itemize}
+\end{infobox}
+
+\subsection{Jupyter y Entornos Interactivos en Docker}
+
+Es habitual correr Jupyter Lab/Notebook dentro de un contenedor con todas las librerías de análisis. [web:33][web:34]
+
+\begin{lstlisting}[style=bashstyle]
+# Dockerfile minimal para Jupyter con ciencia de datos
+FROM python:3.10-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+    jupyterlab pandas numpy matplotlib seaborn
+
+# Exponer el puerto de Jupyter
+EXPOSE 8888
+
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
+\end{lstlisting}
+
+\begin{lstlisting}[style=bashstyle]
+# Construir imagen
+docker build -t ds-notebook:latest .
+
+# Ejecutar Jupyter con acceso a tu código y datos
+docker run --rm -p 8888:8888 \
+  -v $(pwd):/app \
+  ds-notebook:latest
+\end{lstlisting}
+
+Luego abre en el navegador la URL con el token que se muestra en la terminal.
+Así puedes trabajar en notebooks en un ambiente controlado y replicable. [web:33][web:34]
+
+\begin{agrobox}{Ejercicio con Jupyter}
+\begin{enumerate}
+  \item Crea un \texttt{Dockerfile} para correr Jupyter con tus librerías favoritas (\texttt{pandas}, \texttt{scikit-learn}, \texttt{xgboost}).
+  \item Ejecuta un notebook que cargue \texttt{data/processed/sensores\_limpios.csv} y genere un gráfico guardado en \texttt{reports/}.
+\end{enumerate}
+\end{agrobox}
+
+\subsection{docker-compose para Pipelines de Datos}
+
+Cuando tu proyecto tiene varios servicios (por ejemplo, base de datos + notebook + API), \texttt{docker-compose} te ayuda a orquestarlos con un solo archivo. [web:27][web:30][web:36]
+
+\begin{lstlisting}[style=bashstyle]
+# docker-compose.yml
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: sensoresdb
+      POSTGRES_USER: ds_user
+      POSTGRES_PASSWORD: ds_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  notebook:
+    build: .
+    ports:
+      - "8888:8888"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
+\end{lstlisting}
+
+\begin{lstlisting}[style=bashstyle]
+# Levantar todos los servicios
+docker compose up
+
+# Detenerlos
+docker compose down
+\end{lstlisting}
+
+Esta estructura permite reproducir un entorno completo de análisis, con almacenamiento persistente en el volumen \texttt{postgres\_data}. [web:27]
+
+\subsection{Buenas Prácticas para Ciencia de Datos}
+
+\begin{infobox}{Checklist profesional}
+\begin{itemize}
+  \item Versiona el \texttt{Dockerfile} junto con tu código y \texttt{requirements.txt}. [web:30][web:32]
+  \item Usa etiquetas (\texttt{tags}) significativas en las imágenes, por ejemplo \texttt{:v1.0}, \texttt{:exp-humedad-2026-01}. [web:32][web:35]
+  \item Mantén las imágenes pequeñas: elimina paquetes innecesarios y usa \texttt{--no-cache-dir} en \texttt{pip}. [web:32][web:38]
+  \item No incluyas secretos (claves, tokens) dentro de la imagen; pásalos como variables de entorno o mediante volúmenes. [web:32][web:38]
+\end{itemize}
+\end{infobox}
+
+\begin{agrobox}{Reto Docker}
+Crea una imagen para tu \emph{Reto Final Profesional} que:
+\begin{itemize}
+  \item Construya la estructura del proyecto y ejecute el pipeline completo de validación y reporte.
+  \item Use volúmenes para leer datos desde \texttt{data/raw} y escribir resultados en \texttt{reports/}.
+  \item Pueda ejecutarse con un único comando \texttt{docker run ...} en cualquier máquina con Docker instalado.
+\end{itemize}
+\end{agrobox}
+
+\appendix
+
+% =====================================================
+% ANEXO
+% =====================================================
+\section*{Anexo: Alias de Seguridad y Productividad}
+
+\begin{lstlisting}[style=bashstyle]
+# Alias de seguridad para evitar borrados accidentales
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Alias útiles para proyectos de datos
+alias ll='ls -lh'
+alias la='ls -lha'
+alias actenv='source ia_env/bin/activate'
+\end{lstlisting}
+
+\begin{infobox}{Siguiente nivel}
+A partir de este manual, el siguiente paso es integrar estas prácticas con herramientas de MLOps (como \texttt{make}, \texttt{Docker} y sistemas de CI/CD) para automatizar aún más el ciclo de vida de modelos. [web:9][web:25]
+\end{infobox}
+
+\end{document}
